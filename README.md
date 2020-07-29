@@ -101,11 +101,8 @@ socket.on("group-message", {text: 'text',sender: 'sender_id',receiver: 'receiver
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/uzairkhan01/node-chat-stream/issues). 
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/). 
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
 ## Show your support
 
