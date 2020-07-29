@@ -1,0 +1,116 @@
+## Node js Chat Stream  
+<p>
+  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
+  <a href="https://github.com/uzairkhan01/node-chat-stream" target="_blank">
+    <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
+  </a>
+  <a href="#" target="_blank">
+    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
+  </a>
+</p>
+
+A NodeJS chat library build with socket.io and express js.This Package provide following types of chat:  
+
+1-User to user chat  
+
+2-User to multi-user chat 
+
+3-Group chat 
+
+## Getting Started
+
+### Prerequisites  
+1-Nodejs  
+2-Express server  
+2-MongoDB  
+3-Socket Io version >= v2.3.0
+
+### Installation  
+1-Run 
+```sh
+npm i node-chat-stream
+//or
+yarn add node-chat-stream 
+```  
+2- Server side import and config:  
+```sh
+import { SetChatConfig, StartChat } from ('node-chat-stream');
+//(above for es6 ) or
+const { SetChatConfig, StartChat } = require('node-chat-stream').NodeChatSteam;
+
+ChatConfig({db_url: 'your_db_url'});  
+
+StartChat(your_project_socket , express_server);
+``` 
+ 
+
+### Client Side Flow  
+1-Install socket io  
+2-import and socket io config  
+3-Adde following event listener (also other basic event listener like reconnect ,disconnect)  
+
+
+```sh
+socket.on("message", your_method/function);         
+//  for user to user chat
+```  
+
+```sh
+socket.on("multi-user-message", your_method/function);
+//  user to multi-user chat
+```  
+
+```sh
+socket.on("group-message", your_method/function);
+//  group chat  
+```  
+
+ 
+
+4-creat user with `/chat-stream/users` api  
+
+5- 
+```sh
+socket.emit("sign-in", user);
+//user created in step 4   
+```  
+
+### For sending messages example  
+```sh
+socket.on("message", {text: 'text',sender: 'sender_id',receiver: 'receiver_id'});
+//  for user to user  
+```  
+```sh
+socket.on("multi-user-message", {text: 'text',chat_list_id: 'chat_list_id',receiver: 'receiver_id'});
+//  for user to multi-user 
+```  
+```sh
+socket.on("group-message", {text: 'text',sender: 'sender_id',receiver: 'receiver_id'});
+//  for group  chat 
+```  
+
+
+### API Docmentation  
+> https://documenter.getpostman.com/view/12181559/T1DqhdBV?version=latest  
+
+## Built With
+
+* [Socket.IO](https://socket.io/) - Realtime communication library
+* [Express](https://expressjs.com/) - Web application framework for Node.js.
+* [MongoDB](https://www.mongodb.com/) - NoSQL database
+
+## 🤝 Contributing
+
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/uzairkhan01/node-chat-stream/issues). 
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+## Show your support
+
+Give a ⭐️ if this project helped you!  
+
+## Acknowledgments
+
+* [Cooperative Computing](https://www.cooperativecomputing.com/)  
