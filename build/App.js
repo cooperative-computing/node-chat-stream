@@ -15,7 +15,7 @@ var index_1 = __importDefault(require("./Config/index"));
 var SetChatConfig = index_1.default.SetChatConfig;
 var NodeChatCtream = function (socket, app) {
     if (index_1.default.ChatConfig.db_url) {
-        DB_1.default(index_1.default.ChatConfig.db_url).then(function (db) { return console.log("Chat library DB connected correctly to the server"); });
+        DB_1.default(index_1.default.ChatConfig.db_url).then(function (db) { return console.log("node-chat-stream DB connected to the server"); });
     }
     else
         throw new Error("Databse URL not found.");

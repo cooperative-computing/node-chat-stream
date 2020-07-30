@@ -11,7 +11,7 @@ import Config from './Config/index';
 const SetChatConfig = Config.SetChatConfig;
 const NodeChatCtream = (socket, app) => {
   if (Config.ChatConfig.db_url) {
-    Connect(Config.ChatConfig.db_url).then((db) => console.log("Chat library DB connected correctly to the server"));
+    Connect(Config.ChatConfig.db_url).then((db) => console.log("node-chat-stream DB connected to the server"));
   }
   else throw new Error("Databse URL not found.");
 

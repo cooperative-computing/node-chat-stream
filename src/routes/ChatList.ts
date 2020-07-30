@@ -26,7 +26,7 @@ ChatListRoutes.route("/").get(async (req, res, next) => {
 
 });
 
-
+//Fetch Chat for user to multi-user and user to group
 ChatListRoutes.route("/chat").get(async (req, res, next) => {
   let page = req.query.page || 1;
   let limit = req.query.limit || 20;
@@ -42,6 +42,7 @@ ChatListRoutes.route("/chat").get(async (req, res, next) => {
   else Helper.sendNotFoundResponse(res, 'message');
 });
 
+//Fetch Chat for user to user
 ChatListRoutes.route("/user-user-chat").get(async (req, res, next) => {
   let page = req.query.page || 1;
   let limit = req.query.limit || 20;
@@ -65,7 +66,7 @@ ChatListRoutes.route("/user-user-chat").get(async (req, res, next) => {
   else Helper.sendNotFoundResponse(res, 'message');
 });
 
-
+//Add Chat
 ChatListRoutes.route("/chat").post(async (req, res, next) => {
   let body = req.body;
   let sender = body.sender;
@@ -83,6 +84,7 @@ ChatListRoutes.route("/chat").post(async (req, res, next) => {
   }
 });
 
+//Add ChatList/Group
 ChatListRoutes.route("/add").post(async (req, res, next) => {
   let body = req.body;
   if (body.created_by && body.receivers && body.chat_type) {
@@ -104,7 +106,7 @@ ChatListRoutes.route("/add").post(async (req, res, next) => {
   }
 });
 
-//Update receivers
+//Update receivers in ChatList/Group
 ChatListRoutes.route("/update").post(async (req, res, next) => {
   let chat_list_id = req.body.chat_list_id;
   let receivers = req.body.receivers;
@@ -129,13 +131,17 @@ ChatListRoutes.route("/users").get(async (req, res, next) => {
   let limit = req.query.limit || 20;
   let chat_list_id = req.query.chat_list_id;
   if (chat_list_id) {
-    let chatList = await ChatList.findOne({ _id: chat_list_id });
-    if (chatList._id) {
+    try {
+      let chatList = await ChatList.findOne({ _id: chat_list_id });
       let users = await Users.paginate({ _id: { $not: { $in: chatList.receivers } } }, { page, limit });
       Helper.sendPaginationResponse(res, users);
-
     }
+    catch (e) {
+      Helper.errorResponse(res, 'group/chat_list not found');
+    }
+
   }
+  else return Helper.errorResponse(res, 'chat_list_id id missing');
 
 });
 

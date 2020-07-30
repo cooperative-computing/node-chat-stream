@@ -82,6 +82,7 @@ ChatListRoutes.route("/").get(function (req, res, next) { return __awaiter(void 
         }
     });
 }); });
+//Fetch Chat for user to multi-user and user to group
 ChatListRoutes.route("/chat").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var page, limit, query, param, paginationData, getData;
     return __generator(this, function (_a) {
@@ -109,6 +110,7 @@ ChatListRoutes.route("/chat").get(function (req, res, next) { return __awaiter(v
         }
     });
 }); });
+//Fetch Chat for user to user
 ChatListRoutes.route("/user-user-chat").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var page, limit, query, param, sender, receiver, chat_list, paginationData, getData, error_1;
     return __generator(this, function (_a) {
@@ -149,6 +151,7 @@ ChatListRoutes.route("/user-user-chat").get(function (req, res, next) { return _
         }
     });
 }); });
+//Add Chat
 ChatListRoutes.route("/chat").post(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var body, sender, chat_list_id, text, chatList;
     return __generator(this, function (_a) {
@@ -169,6 +172,7 @@ ChatListRoutes.route("/chat").post(function (req, res, next) { return __awaiter(
         return [2 /*return*/];
     });
 }); });
+//Add ChatList/Group
 ChatListRoutes.route("/add").post(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var body, allIds, data, chatList, getData, e_1;
     return __generator(this, function (_a) {
@@ -200,7 +204,7 @@ ChatListRoutes.route("/add").post(function (req, res, next) { return __awaiter(v
         }
     });
 }); });
-//Update receivers
+//Update receivers in ChatList/Group
 ChatListRoutes.route("/update").post(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var chat_list_id, receivers, e_2;
     return __generator(this, function (_a) {
@@ -231,24 +235,32 @@ ChatListRoutes.route("/update").post(function (req, res, next) { return __awaite
 }); });
 //Fetch Users for ChatList/Group
 ChatListRoutes.route("/users").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, limit, chat_list_id, chatList, users;
+    var page, limit, chat_list_id, chatList, users, e_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 page = req.query.page || 1;
                 limit = req.query.limit || 20;
                 chat_list_id = req.query.chat_list_id;
-                if (!chat_list_id) return [3 /*break*/, 3];
-                return [4 /*yield*/, ChatList_1.default.findOne({ _id: chat_list_id })];
+                if (!chat_list_id) return [3 /*break*/, 6];
+                _a.label = 1;
             case 1:
-                chatList = _a.sent();
-                if (!chatList._id) return [3 /*break*/, 3];
-                return [4 /*yield*/, Users_1.default.paginate({ _id: { $not: { $in: chatList.receivers } } }, { page: page, limit: limit })];
+                _a.trys.push([1, 4, , 5]);
+                return [4 /*yield*/, ChatList_1.default.findOne({ _id: chat_list_id })];
             case 2:
+                chatList = _a.sent();
+                return [4 /*yield*/, Users_1.default.paginate({ _id: { $not: { $in: chatList.receivers } } }, { page: page, limit: limit })];
+            case 3:
                 users = _a.sent();
                 Helper_1.default.sendPaginationResponse(res, users);
-                _a.label = 3;
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 5];
+            case 4:
+                e_3 = _a.sent();
+                Helper_1.default.errorResponse(res, 'chat_list_id not found');
+                return [3 /*break*/, 5];
+            case 5: return [3 /*break*/, 7];
+            case 6: return [2 /*return*/, Helper_1.default.errorResponse(res, 'chat_list_id id missing')];
+            case 7: return [2 /*return*/];
         }
     });
 }); });
