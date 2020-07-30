@@ -81,16 +81,16 @@ socket.on("message", {text: 'text',sender: 'sender_id',receiver: 'receiver_id'})
 //  for user to user  
 ```  
 ```sh
-socket.on("multi-user-message", {text: 'text',chat_list_id: 'chat_list_id',receiver: 'receiver_id'});
+socket.on("multi-user-message", {text: 'text',chat_list_id: 'chat_list_id'});
 //  for user to multi-user 
 ```  
 ```sh
-socket.on("group-message", {text: 'text',sender: 'sender_id',receiver: 'receiver_id'});
+socket.on("group-message", {text: 'text',sender: 'sender_id',chat_list_id: 'chat_list_id'});
 //  for group  chat 
 ```  
 
 
-### API Docmentation  
+### REST API Docmentation  
 > https://documenter.getpostman.com/view/12181559/T1DqhdBV?version=latest  
 
 ## Built With
@@ -101,13 +101,13 @@ socket.on("group-message", {text: 'text',sender: 'sender_id',receiver: 'receiver
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/). 
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/cooperative-computing/node-chat-stream/issues). 
 
 
 ## Show your support
 
 Give a ⭐️ if this project helped you!  
 
-## Acknowledgments
+## License
 
-* [Cooperative Computing](https://www.cooperativecomputing.com/)  
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
