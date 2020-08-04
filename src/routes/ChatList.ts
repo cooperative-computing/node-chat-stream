@@ -141,7 +141,7 @@ ChatListRoutes.route("/users").get(async (req, res, next) => {
     }
 
   }
-  else return Helper.errorResponse(res, 'chat_list_id id missing');
+  else return Helper.errorResponse(res, 'chat_list_id missing');
 
 });
 
