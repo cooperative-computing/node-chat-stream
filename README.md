@@ -1,10 +1,10 @@
 ## Node js Chat Stream  
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
-  <a href="https://github.com/uzairkhan01/node-chat-stream" target="_blank">
+  <a href="https://www.npmjs.com/package/@cooperative-computing/node-chat-stream" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
-  <a href="#" target="_blank">
+  <a href="https://github.com/cooperative-computing/node-chat-stream/blob/master/LICENSE" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
 </p>
@@ -28,15 +28,15 @@ A NodeJS chat library build with socket.io and express js.This Package provide f
 ### Installation  
 1-Run 
 ```sh
-npm i node-chat-stream
+npm i @cooperative-computing/node-chat-stream
 //or
-yarn add node-chat-stream 
+yarn add @cooperative-computing/node-chat-stream
 ```  
 2- Server side import and config:  
 ```sh
-import { SetChatConfig, StartChat } from ('node-chat-stream');
+import { SetChatConfig, StartChat } from ('@cooperative-computing/node-chat-stream');
 //(above for es6 ) or
-const { SetChatConfig, StartChat } = require('node-chat-stream').NodeChatSteam;
+const { SetChatConfig, StartChat } = require('@cooperative-computing/node-chat-stream').NodeChatSteam;
 
 ChatConfig({db_url: 'your_db_url'});  
 

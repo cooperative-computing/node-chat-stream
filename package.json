@@ -1,5 +1,5 @@
 {
-  "name": "node-chat-stream",
+  "name": "@cooperative-computing/node-chat-stream",
   "version": "1.0.0",
   "main": "./build/App.js",
   "license": "MIT",
@@ -40,7 +40,11 @@
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/cooperative-computing/node-chat-stream.git"
+    "url": "git+https://github.com/cooperative-computing/node-chat-stream.git"
   },
-  "homepage": "https://github.com/cooperative-computing/node-chat-stream"
+  "homepage": "https://github.com/cooperative-computing/node-chat-stream",
+  "bugs": {
+    "url": "https://github.com/cooperative-computing/node-chat-stream/issues"
+  },
+  "author": "cooperative-computing (https://www.cooperativecomputing.com/)"
 }
