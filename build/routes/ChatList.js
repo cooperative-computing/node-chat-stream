@@ -256,10 +256,10 @@ ChatListRoutes.route("/users").get(function (req, res, next) { return __awaiter(
                 return [3 /*break*/, 5];
             case 4:
                 e_3 = _a.sent();
-                Helper_1.default.errorResponse(res, 'chat_list_id not found');
+                Helper_1.default.errorResponse(res, 'group/chat_list not found');
                 return [3 /*break*/, 5];
             case 5: return [3 /*break*/, 7];
-            case 6: return [2 /*return*/, Helper_1.default.errorResponse(res, 'chat_list_id id missing')];
+            case 6: return [2 /*return*/, Helper_1.default.errorResponse(res, 'chat_list_id missing')];
             case 7: return [2 /*return*/];
         }
     });
