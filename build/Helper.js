@@ -51,6 +51,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Chat_1 = __importDefault(require("./Models/Chat"));
+var Users_1 = __importDefault(require("./Models/Users"));
 var ChatList_1 = __importDefault(require("./Models/ChatList"));
 var Helper = {
     sendResponse: function (res, data) {
@@ -116,6 +117,26 @@ var Helper = {
     }); },
     userToUserQuery: function (sender, receiver) {
         return { $or: [{ chat_type: 'user-user', created_by: sender, receivers: [receiver] }, { chat_type: 'user-user', created_by: receiver, receivers: [sender] }] };
-    }
+    },
+    getUserId: function (user) { return __awaiter(void 0, void 0, void 0, function () {
+        var getUser;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    console.log("user ", user);
+                    if (user._id)
+                        return [2 /*return*/, user._id];
+                    if (!user.email) return [3 /*break*/, 2];
+                    return [4 /*yield*/, Users_1.default.findOne({ email: user.email })];
+                case 1:
+                    getUser = _a.sent();
+                    console.log("getUser ", getUser);
+                    if (getUser._id)
+                        return [2 /*return*/, getUser._id];
+                    _a.label = 2;
+                case 2: return [2 /*return*/, ''];
+            }
+        });
+    }); }
 };
 exports.default = Helper;

@@ -49,6 +49,7 @@ var Socket_IO = function (socket) {
     socket.on("connection", function (client) { return __awaiter(void 0, void 0, void 0, function () {
         var uploader;
         return __generator(this, function (_a) {
+            console.log("connected  to socket");
             uploader = new socketio_file_upload_1.default();
             uploader.dir = "./uploads";
             uploader.listen(client);
@@ -60,18 +61,27 @@ var Socket_IO = function (socket) {
             uploader.on("error", function (event) {
                 console.log("Error from uploader", event);
             });
-            client.on("sign-in", function (e) {
-                var user_id = e._id;
-                if (!user_id)
-                    return false;
-                client.user_id = user_id;
-                if (clients[user_id]) {
-                    clients[user_id].push(client);
-                }
-                else {
-                    clients[user_id] = [client];
-                }
-            });
+            client.on("sign-in", function (e) { return __awaiter(void 0, void 0, void 0, function () {
+                var user_id;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, Helper_1.default.getUserId(e)];
+                        case 1:
+                            user_id = _a.sent();
+                            if (!user_id)
+                                return [2 /*return*/, false];
+                            client.user_id = user_id;
+                            if (clients[user_id]) {
+                                clients[user_id].push(client);
+                            }
+                            else {
+                                clients[user_id] = [client];
+                            }
+                            console.log("sign-in complete");
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
             client.on("disconnect", function () {
                 if (!client.user_id || !clients[client.user_id])
                     return false;

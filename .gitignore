@@ -122,4 +122,4 @@ package-lock.json
 .DS_Store
 
 #remove source code for production
-src/
+# src/

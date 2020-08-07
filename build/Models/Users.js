@@ -13,6 +13,9 @@ var usersSchema = new Schema({
     image: {
         type: String
     },
+    email: {
+        type: String
+    }
 }, {
     timestamps: true
 });

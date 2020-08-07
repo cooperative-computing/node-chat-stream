@@ -63,8 +63,9 @@ UsersRouter.route("/").get(function (req, res, next) { return __awaiter(void 0, 
     });
 }); });
 UsersRouter.route("/").post(function (req, res, next) {
-    if (req.body.name) {
-        var user = new Users_1.default({ name: req.body.name, image: req.body.image });
+    console.log("add user ", req.body);
+    if (req.body.name || req.body.email) {
+        var user = new Users_1.default({ name: req.body.name, image: req.body.image, email: req.body.email });
         user.save();
         Helper_1.default.sendResponse(res, user);
     }
@@ -73,7 +74,26 @@ UsersRouter.route("/").post(function (req, res, next) {
 UsersRouter.route("/import").post(function (req, res, next) {
     var users = req.body.users;
     if (users && users.length > 0) {
-        Users_1.default.insertMany(users);
+        users.map(function (item) { return __awaiter(void 0, void 0, void 0, function () {
+            var email, userExist, user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        email = item.email;
+                        if (!email) return [3 /*break*/, 2];
+                        return [4 /*yield*/, Users_1.default.countDocuments({ email: email })];
+                    case 1:
+                        userExist = _a.sent();
+                        if (!userExist) {
+                            user = new Users_1.default({ name: item.name, image: item.image, email: email });
+                            user.save();
+                        }
+                        _a.label = 2;
+                    case 2: return [2 /*return*/];
+                }
+            });
+        }); });
+        // Users.insertMany(users);
         Helper_1.default.messageResponse(res, 'Users added successfully!');
     }
     else
