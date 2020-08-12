@@ -5,7 +5,7 @@ import ChatList from './Models/ChatList';
 const Helper = {
   sendResponse: (res: any, data: any) => {
     res.statusCode = 200;
-    res.json({ data: data });
+    res.json({ data: data, status: 'success' });
   },
   sendNotFoundResponse: (res: any, name: any) => {
     res.statusCode = 200;
@@ -73,13 +73,18 @@ const Helper = {
   getUserId: async (user) => {
     console.log("user ", user);
 
-    if (user._id) return user._id;
+    if (user._id) return user._id;//mongo _id in user
+    if (user.user_id) return String(user.user_id);//mongo user_id in user
     if (user.email) {
       let getUser = await Users.findOne({ email: user.email });
       console.log("getUser ", getUser);
       if (getUser._id) return getUser._id;
     }
     return '';
+  },
+  userIdToMongoId: async (user_id) => {
+    let getUser = await Users.findOne({ user_id: user_id });
+    return getUser._id;
   }
 };
 

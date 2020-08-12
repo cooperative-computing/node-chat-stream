@@ -12,7 +12,7 @@ const Socket_IO = (socket) => {
   var clients: any[] = [];
   //setup event listener
   socket.on("connection", async client => {
-    console.log("connected  to socket");
+    console.log("- connected  to socket -");
 
     var uploader = new SocketIOFileUpload();
     uploader.dir = "./uploads";
@@ -28,7 +28,7 @@ const Socket_IO = (socket) => {
       console.log("Error from uploader", event);
     });
 
-    client.on("sign-in", async e => {
+    client.on("node-chat-join", async e => {
       let user_id = await Helper.getUserId(e);
       if (!user_id) return false;
       client.user_id = user_id;
@@ -37,7 +37,7 @@ const Socket_IO = (socket) => {
       } else {
         clients[user_id] = [client];
       }
-      console.log("sign-in complete");
+      console.log("node-chat-join complete");
     });
 
     client.on("disconnect", function () {
@@ -52,7 +52,11 @@ const Socket_IO = (socket) => {
 
     // user to user start
     client.on("message", async event => {
-
+      console.log("message ", event);
+      if (event.sender_id && event.receiver_id) {
+        event.sender = await Helper.userIdToMongoId(event.sender_id);
+        event.receiver = await Helper.userIdToMongoId(event.receiver_id);
+      }
       let targetId = event.receiver;
       if (targetId && clients[targetId]) {
         clients[targetId].forEach(cli => {
@@ -82,6 +86,10 @@ const Socket_IO = (socket) => {
         Helper.addChat(data); //save chat to the database
       }
     });
+
+
+
+
   });
 
 

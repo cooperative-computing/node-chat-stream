@@ -12,6 +12,9 @@ const usersSchema = new Schema(
     },
     email: {
       type: String
+    },
+    user_id: {
+      type: String
     }
   },
   {

@@ -49,7 +49,7 @@ var Socket_IO = function (socket) {
     socket.on("connection", function (client) { return __awaiter(void 0, void 0, void 0, function () {
         var uploader;
         return __generator(this, function (_a) {
-            console.log("connected  to socket");
+            console.log("- connected  to socket -");
             uploader = new socketio_file_upload_1.default();
             uploader.dir = "./uploads";
             uploader.listen(client);
@@ -61,7 +61,7 @@ var Socket_IO = function (socket) {
             uploader.on("error", function (event) {
                 console.log("Error from uploader", event);
             });
-            client.on("sign-in", function (e) { return __awaiter(void 0, void 0, void 0, function () {
+            client.on("node-chat-join", function (e) { return __awaiter(void 0, void 0, void 0, function () {
                 var user_id;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
@@ -77,7 +77,7 @@ var Socket_IO = function (socket) {
                             else {
                                 clients[user_id] = [client];
                             }
-                            console.log("sign-in complete");
+                            console.log("node-chat-join complete");
                             return [2 /*return*/];
                     }
                 });
@@ -94,10 +94,22 @@ var Socket_IO = function (socket) {
             });
             // user to user start
             client.on("message", function (event) { return __awaiter(void 0, void 0, void 0, function () {
-                var targetId;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var _a, _b, targetId;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
+                            console.log("message ", event);
+                            if (!(event.sender_id && event.receiver_id)) return [3 /*break*/, 3];
+                            _a = event;
+                            return [4 /*yield*/, Helper_1.default.userIdToMongoId(event.sender_id)];
+                        case 1:
+                            _a.sender = _c.sent();
+                            _b = event;
+                            return [4 /*yield*/, Helper_1.default.userIdToMongoId(event.receiver_id)];
+                        case 2:
+                            _b.receiver = _c.sent();
+                            _c.label = 3;
+                        case 3:
                             targetId = event.receiver;
                             if (targetId && clients[targetId]) {
                                 clients[targetId].forEach(function (cli) {
@@ -105,8 +117,8 @@ var Socket_IO = function (socket) {
                                 });
                             }
                             return [4 /*yield*/, Helper_1.default.userToUserChat(event)];
-                        case 1:
-                            _a.sent();
+                        case 4:
+                            _c.sent();
                             return [2 /*return*/];
                     }
                 });

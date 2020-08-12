@@ -44,7 +44,7 @@ var Helper_1 = __importDefault(require("../Helper"));
 var Users_1 = __importDefault(require("../Models/Users"));
 var UsersRouter = express_1.default.Router();
 UsersRouter.route("/").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, limit, query, user_id, users;
+    var page, limit, query, user_id, fetch_users, users;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -52,8 +52,11 @@ UsersRouter.route("/").get(function (req, res, next) { return __awaiter(void 0, 
                 limit = req.query.limit || 10;
                 query = {};
                 user_id = req.query.user_id;
+                fetch_users = req.query.fetch_users;
                 if (user_id)
-                    query = { _id: { $not: { $in: [user_id] } } }; // exclude current user
+                    query = { user_id: { $not: { $in: [user_id] } } }; // exclude current user
+                if (fetch_users)
+                    query = { user_id: { $in: [fetch_users] } }; // fetch spcific users
                 return [4 /*yield*/, Users_1.default.paginate(query, { page: page, limit: limit })];
             case 1:
                 users = _a.sent();
@@ -65,13 +68,14 @@ UsersRouter.route("/").get(function (req, res, next) { return __awaiter(void 0, 
 UsersRouter.route("/").post(function (req, res, next) {
     console.log("add user ", req.body);
     if (req.body.name || req.body.email) {
-        var user = new Users_1.default({ name: req.body.name, image: req.body.image, email: req.body.email });
+        var user = new Users_1.default({ name: req.body.name, image: req.body.image, email: req.body.email, user_id: req.body.user_id });
         user.save();
         Helper_1.default.sendResponse(res, user);
     }
 });
 // Import Users APi
 UsersRouter.route("/import").post(function (req, res, next) {
+    console.log("req.body ", req.body);
     var users = req.body.users;
     if (users && users.length > 0) {
         users.map(function (item) { return __awaiter(void 0, void 0, void 0, function () {
@@ -85,7 +89,7 @@ UsersRouter.route("/import").post(function (req, res, next) {
                     case 1:
                         userExist = _a.sent();
                         if (!userExist) {
-                            user = new Users_1.default({ name: item.name, image: item.image, email: email });
+                            user = new Users_1.default({ name: item.name, image: item.image, email: email, user_id: item.user_id });
                             user.save();
                         }
                         _a.label = 2;

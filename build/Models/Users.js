@@ -15,6 +15,9 @@ var usersSchema = new Schema({
     },
     email: {
         type: String
+    },
+    user_id: {
+        type: String
     }
 }, {
     timestamps: true

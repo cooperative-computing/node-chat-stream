@@ -53,7 +53,7 @@ var Helper_1 = __importDefault(require("../Helper"));
 var Users_1 = __importDefault(require("../Models/Users"));
 var ChatListRoutes = express_1.default.Router();
 ChatListRoutes.route("/").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, limit, query, param, user_id, chat_type, paginationData, getData, params;
+    var page, limit, query, param, _user_id, user_id, chat_type, paginationData, getData, params;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -61,24 +61,27 @@ ChatListRoutes.route("/").get(function (req, res, next) { return __awaiter(void 
                 limit = req.query.limit || 20;
                 query = {};
                 param = req.query;
-                if (!(param.user_id && param.chat_type)) return [3 /*break*/, 3];
-                user_id = param.user_id;
+                _user_id = param.user_id;
+                if (!(_user_id && param.chat_type)) return [3 /*break*/, 4];
+                return [4 /*yield*/, Helper_1.default.userIdToMongoId(_user_id)];
+            case 1:
+                user_id = _a.sent();
                 chat_type = param.chat_type;
                 query = { chat_type: chat_type, receivers: { $all: [user_id] } };
                 return [4 /*yield*/, ChatList_1.default.paginate(query, { page: page, limit: limit, sort: { createdAt: -1 } })];
-            case 1:
+            case 2:
                 paginationData = _a.sent();
                 return [4 /*yield*/, ChatList_1.default.populate(paginationData.docs, 'created_by receivers')];
-            case 2:
+            case 3:
                 getData = _a.sent();
                 paginationData.doc = getData;
                 params = { chat_type: chat_type, user_id: param.user_id };
                 Helper_1.default.sendPaginationResponse(res, paginationData, params);
-                return [3 /*break*/, 4];
-            case 3:
+                return [3 /*break*/, 5];
+            case 4:
                 Helper_1.default.sendNotFoundResponse(res, param.chat_type == 'user-group' ? 'Group' : 'Chat list');
-                _a.label = 4;
-            case 4: return [2 /*return*/];
+                _a.label = 5;
+            case 5: return [2 /*return*/];
         }
     });
 }); });

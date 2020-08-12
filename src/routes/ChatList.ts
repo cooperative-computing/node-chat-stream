@@ -11,8 +11,9 @@ ChatListRoutes.route("/").get(async (req, res, next) => {
   let limit = req.query.limit || 20;
   let query = {};
   let param = req.query;
-  if (param.user_id && param.chat_type) {
-    let user_id = param.user_id;
+  let _user_id = param.user_id;
+  if (_user_id && param.chat_type) {
+    let user_id = await Helper.userIdToMongoId(_user_id);
     let chat_type = param.chat_type;
     query = { chat_type, receivers: { $all: [user_id] } };
     let paginationData = await ChatList.paginate(query, { page, limit, sort: { createdAt: -1 } });

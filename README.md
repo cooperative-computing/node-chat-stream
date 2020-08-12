@@ -71,7 +71,7 @@ socket.on("group-message", your_method/function);
 
 5- 
 ```sh
-socket.emit("sign-in", user);
+socket.emit("node-chat-join", user);
 //user created in step 4   
 ```  
 

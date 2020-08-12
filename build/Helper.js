@@ -56,7 +56,7 @@ var ChatList_1 = __importDefault(require("./Models/ChatList"));
 var Helper = {
     sendResponse: function (res, data) {
         res.statusCode = 200;
-        res.json({ data: data });
+        res.json({ data: data, status: 'success' });
     },
     sendNotFoundResponse: function (res, name) {
         res.statusCode = 200;
@@ -125,7 +125,9 @@ var Helper = {
                 case 0:
                     console.log("user ", user);
                     if (user._id)
-                        return [2 /*return*/, user._id];
+                        return [2 /*return*/, user._id]; //mongo _id in user
+                    if (user.user_id)
+                        return [2 /*return*/, String(user.user_id)]; //mongo user_id in user
                     if (!user.email) return [3 /*break*/, 2];
                     return [4 /*yield*/, Users_1.default.findOne({ email: user.email })];
                 case 1:
@@ -135,6 +137,17 @@ var Helper = {
                         return [2 /*return*/, getUser._id];
                     _a.label = 2;
                 case 2: return [2 /*return*/, ''];
+            }
+        });
+    }); },
+    userIdToMongoId: function (user_id) { return __awaiter(void 0, void 0, void 0, function () {
+        var getUser;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, Users_1.default.findOne({ user_id: user_id })];
+                case 1:
+                    getUser = _a.sent();
+                    return [2 /*return*/, getUser._id];
             }
         });
     }); }
