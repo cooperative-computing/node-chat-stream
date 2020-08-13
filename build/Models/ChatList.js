@@ -13,12 +13,10 @@ var ChatListSchema = new Schema({
         default: 'user-multi-user'
     },
     receivers: [{
-            type: Schema.Types.ObjectId,
-            ref: 'chat_stream_users'
+            type: String
         }],
     created_by: {
-        type: Schema.Types.ObjectId,
-        ref: 'chat_stream_users'
+        type: String
     },
     name: {
         type: String

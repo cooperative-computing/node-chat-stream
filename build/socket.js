@@ -94,22 +94,11 @@ var Socket_IO = function (socket) {
             });
             // user to user start
             client.on("message", function (event) { return __awaiter(void 0, void 0, void 0, function () {
-                var _a, _b, targetId;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var targetId;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
                         case 0:
                             console.log("message ", event);
-                            if (!(event.sender_id && event.receiver_id)) return [3 /*break*/, 3];
-                            _a = event;
-                            return [4 /*yield*/, Helper_1.default.userIdToMongoId(event.sender_id)];
-                        case 1:
-                            _a.sender = _c.sent();
-                            _b = event;
-                            return [4 /*yield*/, Helper_1.default.userIdToMongoId(event.receiver_id)];
-                        case 2:
-                            _b.receiver = _c.sent();
-                            _c.label = 3;
-                        case 3:
                             targetId = event.receiver;
                             if (targetId && clients[targetId]) {
                                 clients[targetId].forEach(function (cli) {
@@ -117,8 +106,8 @@ var Socket_IO = function (socket) {
                                 });
                             }
                             return [4 /*yield*/, Helper_1.default.userToUserChat(event)];
-                        case 4:
-                            _c.sent();
+                        case 1:
+                            _a.sent();
                             return [2 /*return*/];
                     }
                 });

@@ -71,7 +71,7 @@ var Helper = {
         res.json({ status: 'success', message: message });
     },
     addChat: function (chat) {
-        var chatMessage = new Chat_1.default({ text: chat.text, sender: chat.sender, chat_list_id: chat.chat_list_id });
+        var chatMessage = new Chat_1.default({ text: chat.text, sender: String(chat.sender), chat_list_id: chat.chat_list_id });
         chatMessage.save();
     },
     sendPaginationResponse: function (res, records, params) {
@@ -104,7 +104,7 @@ var Helper = {
                 case 1:
                     chat_list = _a.sent();
                     if (!chat_list) {
-                        data = { chat_type: 'user-user', created_by: sender, receivers: [receiver] };
+                        data = { chat_type: 'user-user', created_by: sender, receivers: [receiver, sender] };
                         chat_list = new ChatList_1.default(data);
                         chat_list.save();
                     }
@@ -116,28 +116,14 @@ var Helper = {
         });
     }); },
     userToUserQuery: function (sender, receiver) {
-        return { $or: [{ chat_type: 'user-user', created_by: sender, receivers: [receiver] }, { chat_type: 'user-user', created_by: receiver, receivers: [sender] }] };
+        return { $or: [{ chat_type: 'user-user', created_by: String(sender), receivers: [String(receiver)] }, { chat_type: 'user-user', created_by: String(receiver), receivers: [String(sender)] }] };
     },
     getUserId: function (user) { return __awaiter(void 0, void 0, void 0, function () {
-        var getUser;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    console.log("user ", user);
-                    if (user._id)
-                        return [2 /*return*/, user._id]; //mongo _id in user
-                    if (user.user_id)
-                        return [2 /*return*/, String(user.user_id)]; //mongo user_id in user
-                    if (!user.email) return [3 /*break*/, 2];
-                    return [4 /*yield*/, Users_1.default.findOne({ email: user.email })];
-                case 1:
-                    getUser = _a.sent();
-                    console.log("getUser ", getUser);
-                    if (getUser._id)
-                        return [2 /*return*/, getUser._id];
-                    _a.label = 2;
-                case 2: return [2 /*return*/, ''];
-            }
+            console.log("user ", user);
+            if (user._id)
+                return [2 /*return*/, user._id];
+            return [2 /*return*/, ''];
         });
     }); },
     userIdToMongoId: function (user_id) { return __awaiter(void 0, void 0, void 0, function () {

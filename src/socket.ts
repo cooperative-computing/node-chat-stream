@@ -53,10 +53,6 @@ const Socket_IO = (socket) => {
     // user to user start
     client.on("message", async event => {
       console.log("message ", event);
-      if (event.sender_id && event.receiver_id) {
-        event.sender = await Helper.userIdToMongoId(event.sender_id);
-        event.receiver = await Helper.userIdToMongoId(event.receiver_id);
-      }
       let targetId = event.receiver;
       if (targetId && clients[targetId]) {
         clients[targetId].forEach(cli => {

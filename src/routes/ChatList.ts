@@ -11,16 +11,19 @@ ChatListRoutes.route("/").get(async (req, res, next) => {
   let limit = req.query.limit || 20;
   let query = {};
   let param = req.query;
-  let _user_id = param.user_id;
-  if (_user_id && param.chat_type) {
-    let user_id = await Helper.userIdToMongoId(_user_id);
-    let chat_type = param.chat_type;
-    query = { chat_type, receivers: { $all: [user_id] } };
-    let paginationData = await ChatList.paginate(query, { page, limit, sort: { createdAt: -1 } });
-    let getData = await ChatList.populate(paginationData.docs, 'created_by receivers');
-    paginationData.doc = getData;
-    let params = { chat_type, user_id: param.user_id }
-    Helper.sendPaginationResponse(res, paginationData, params);
+  let user_id = param.user_id;
+  if (user_id && param.chat_type) {
+    user_id = String(user_id);
+    try {
+      let chat_type = param.chat_type;
+      query = { chat_type, receivers: { $all: [user_id] } };
+      let paginationData = await ChatList.paginate(query, { page, limit, sort: { createdAt: -1 } });
+      let params = { chat_type, user_id: param.user_id }
+      Helper.sendPaginationResponse(res, paginationData, params);
+    }
+    catch (error) {
+      Helper.sendNotFoundResponse(res, param.chat_type == 'user-group' ? 'Group' : 'Chat list');
+    }
   }
   else Helper.sendNotFoundResponse(res, param.chat_type == 'user-group' ? 'Group' : 'Chat list');
 
@@ -98,7 +101,7 @@ ChatListRoutes.route("/add").post(async (req, res, next) => {
     try {
       let chatList = new ChatList(data);
       chatList.save();
-      let getData = await ChatList.find({ _id: chatList._id }).populate('created_by receivers');
+      let getData = await ChatList.find({ _id: chatList._id });
       Helper.sendResponse(res, getData);
     }
     catch (e) {

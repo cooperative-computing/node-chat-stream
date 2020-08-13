@@ -12,8 +12,7 @@ const chatSchema = new Schema(
       ref: 'chat_stream_chat_list'
     },
     sender: {
-      type: Schema.Types.ObjectId,
-      ref: 'chat_stream_users'
+      type: String
     }
   },
   {

@@ -20,7 +20,7 @@ const Helper = {
     res.json({ status: 'success', message });
   },
   addChat: (chat: any) => {
-    let chatMessage = new Chat({ text: chat.text, sender: chat.sender, chat_list_id: chat.chat_list_id });
+    let chatMessage = new Chat({ text: chat.text, sender: String(chat.sender), chat_list_id: chat.chat_list_id });
     chatMessage.save();
   },
   sendPaginationResponse: (res: any, records: any, params = {}) => {
@@ -58,7 +58,7 @@ const Helper = {
       query = Helper.userToUserQuery(sender, receiver)
       let chat_list = await ChatList.findOne(query);
       if (!chat_list) {
-        let data = { chat_type: 'user-user', created_by: sender, receivers: [receiver] };
+        let data = { chat_type: 'user-user', created_by: sender, receivers: [receiver, sender] };
         chat_list = new ChatList(data);
         chat_list.save();
       }
@@ -68,18 +68,12 @@ const Helper = {
 
   },
   userToUserQuery: (sender, receiver) => {
-    return { $or: [{ chat_type: 'user-user', created_by: sender, receivers: [receiver] }, { chat_type: 'user-user', created_by: receiver, receivers: [sender] }] }
+    return { $or: [{ chat_type: 'user-user', created_by: String(sender), receivers: [String(receiver)] }, { chat_type: 'user-user', created_by: String(receiver), receivers: [String(sender)] }] }
   },
   getUserId: async (user) => {
     console.log("user ", user);
 
-    if (user._id) return user._id;//mongo _id in user
-    if (user.user_id) return String(user.user_id);//mongo user_id in user
-    if (user.email) {
-      let getUser = await Users.findOne({ email: user.email });
-      console.log("getUser ", getUser);
-      if (getUser._id) return getUser._id;
-    }
+    if (user._id) return user._id;
     return '';
   },
   userIdToMongoId: async (user_id) => {

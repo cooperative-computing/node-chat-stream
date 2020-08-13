@@ -53,7 +53,7 @@ var Helper_1 = __importDefault(require("../Helper"));
 var Users_1 = __importDefault(require("../Models/Users"));
 var ChatListRoutes = express_1.default.Router();
 ChatListRoutes.route("/").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, limit, query, param, _user_id, user_id, chat_type, paginationData, getData, params;
+    var page, limit, query, param, user_id, chat_type, paginationData, params, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -61,27 +61,29 @@ ChatListRoutes.route("/").get(function (req, res, next) { return __awaiter(void 
                 limit = req.query.limit || 20;
                 query = {};
                 param = req.query;
-                _user_id = param.user_id;
-                if (!(_user_id && param.chat_type)) return [3 /*break*/, 4];
-                return [4 /*yield*/, Helper_1.default.userIdToMongoId(_user_id)];
+                user_id = param.user_id;
+                if (!(user_id && param.chat_type)) return [3 /*break*/, 5];
+                user_id = String(user_id);
+                _a.label = 1;
             case 1:
-                user_id = _a.sent();
+                _a.trys.push([1, 3, , 4]);
                 chat_type = param.chat_type;
                 query = { chat_type: chat_type, receivers: { $all: [user_id] } };
                 return [4 /*yield*/, ChatList_1.default.paginate(query, { page: page, limit: limit, sort: { createdAt: -1 } })];
             case 2:
                 paginationData = _a.sent();
-                return [4 /*yield*/, ChatList_1.default.populate(paginationData.docs, 'created_by receivers')];
-            case 3:
-                getData = _a.sent();
-                paginationData.doc = getData;
                 params = { chat_type: chat_type, user_id: param.user_id };
                 Helper_1.default.sendPaginationResponse(res, paginationData, params);
-                return [3 /*break*/, 5];
-            case 4:
+                return [3 /*break*/, 4];
+            case 3:
+                error_1 = _a.sent();
                 Helper_1.default.sendNotFoundResponse(res, param.chat_type == 'user-group' ? 'Group' : 'Chat list');
-                _a.label = 5;
-            case 5: return [2 /*return*/];
+                return [3 /*break*/, 4];
+            case 4: return [3 /*break*/, 6];
+            case 5:
+                Helper_1.default.sendNotFoundResponse(res, param.chat_type == 'user-group' ? 'Group' : 'Chat list');
+                _a.label = 6;
+            case 6: return [2 /*return*/];
         }
     });
 }); });
@@ -115,7 +117,7 @@ ChatListRoutes.route("/chat").get(function (req, res, next) { return __awaiter(v
 }); });
 //Fetch Chat for user to user
 ChatListRoutes.route("/user-user-chat").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, limit, query, param, sender, receiver, chat_list, paginationData, getData, error_1;
+    var page, limit, query, param, sender, receiver, chat_list, paginationData, getData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -143,7 +145,7 @@ ChatListRoutes.route("/user-user-chat").get(function (req, res, next) { return _
                 Helper_1.default.sendPaginationResponse(res, paginationData, { sender: sender, receiver: receiver });
                 return [3 /*break*/, 6];
             case 5:
-                error_1 = _a.sent();
+                error_2 = _a.sent();
                 Helper_1.default.sendNotFoundResponse(res, 'message');
                 return [3 /*break*/, 6];
             case 6: return [3 /*break*/, 8];
@@ -194,7 +196,7 @@ ChatListRoutes.route("/add").post(function (req, res, next) { return __awaiter(v
                 _a.trys.push([1, 3, , 4]);
                 chatList = new ChatList_1.default(data);
                 chatList.save();
-                return [4 /*yield*/, ChatList_1.default.find({ _id: chatList._id }).populate('created_by receivers')];
+                return [4 /*yield*/, ChatList_1.default.find({ _id: chatList._id })];
             case 2:
                 getData = _a.sent();
                 Helper_1.default.sendResponse(res, getData);
