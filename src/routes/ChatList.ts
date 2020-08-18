@@ -39,8 +39,6 @@ ChatListRoutes.route("/chat").get(async (req, res, next) => {
   if (param.chat_list_id) {
     query = { chat_list_id: param.chat_list_id };
     let paginationData = await Chat.paginate(query, { page, limit, sort: { createdAt: -1 } });
-    let getData = await Chat.populate(paginationData.docs, 'sender');
-    paginationData.doc = getData;
     Helper.sendPaginationResponse(res, paginationData);
   }
   else Helper.sendNotFoundResponse(res, 'message');
@@ -147,6 +145,24 @@ ChatListRoutes.route("/users").get(async (req, res, next) => {
   }
   else return Helper.errorResponse(res, 'chat_list_id missing');
 
+});
+
+
+//Remove ChatList/Group
+ChatListRoutes.route("/remove").post(async (req, res, next) => {
+  let ids = req.body.ids;
+  if (ids && ids.length > 0) {
+    try {
+      let query = { _id: ids };
+      await ChatList.deleteMany(query);
+      await Chat.deleteMany({ chat_list_id: { $in: ids } });
+      Helper.messageResponse(res, 'Removed successfully!');
+    }
+    catch (e) {
+      Helper.errorResponse(res, 'Something went wrong.Please try again.');
+    }
+  }
+  else Helper.errorResponse(res, 'ids missing.');
 });
 
 

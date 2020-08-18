@@ -89,7 +89,7 @@ ChatListRoutes.route("/").get(function (req, res, next) { return __awaiter(void 
 }); });
 //Fetch Chat for user to multi-user and user to group
 ChatListRoutes.route("/chat").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, limit, query, param, paginationData, getData;
+    var page, limit, query, param, paginationData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -97,21 +97,17 @@ ChatListRoutes.route("/chat").get(function (req, res, next) { return __awaiter(v
                 limit = req.query.limit || 20;
                 query = {};
                 param = req.query;
-                if (!param.chat_list_id) return [3 /*break*/, 3];
+                if (!param.chat_list_id) return [3 /*break*/, 2];
                 query = { chat_list_id: param.chat_list_id };
                 return [4 /*yield*/, Chat_1.default.paginate(query, { page: page, limit: limit, sort: { createdAt: -1 } })];
             case 1:
                 paginationData = _a.sent();
-                return [4 /*yield*/, Chat_1.default.populate(paginationData.docs, 'sender')];
-            case 2:
-                getData = _a.sent();
-                paginationData.doc = getData;
                 Helper_1.default.sendPaginationResponse(res, paginationData);
-                return [3 /*break*/, 4];
-            case 3:
+                return [3 /*break*/, 3];
+            case 2:
                 Helper_1.default.sendNotFoundResponse(res, 'message');
-                _a.label = 4;
-            case 4: return [2 /*return*/];
+                _a.label = 3;
+            case 3: return [2 /*return*/];
         }
     });
 }); });
@@ -265,6 +261,38 @@ ChatListRoutes.route("/users").get(function (req, res, next) { return __awaiter(
                 return [3 /*break*/, 5];
             case 5: return [3 /*break*/, 7];
             case 6: return [2 /*return*/, Helper_1.default.errorResponse(res, 'chat_list_id missing')];
+            case 7: return [2 /*return*/];
+        }
+    });
+}); });
+//Remove ChatList/Group
+ChatListRoutes.route("/remove").post(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var ids, query, e_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                ids = req.body.ids;
+                if (!(ids && ids.length > 0)) return [3 /*break*/, 6];
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 4, , 5]);
+                query = { _id: ids };
+                return [4 /*yield*/, ChatList_1.default.deleteMany(query)];
+            case 2:
+                _a.sent();
+                return [4 /*yield*/, Chat_1.default.deleteMany({ chat_list_id: { $in: ids } })];
+            case 3:
+                _a.sent();
+                Helper_1.default.messageResponse(res, 'Removed successfully!');
+                return [3 /*break*/, 5];
+            case 4:
+                e_4 = _a.sent();
+                Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
+                return [3 /*break*/, 5];
+            case 5: return [3 /*break*/, 7];
+            case 6:
+                Helper_1.default.errorResponse(res, 'ids missing.');
+                _a.label = 7;
             case 7: return [2 /*return*/];
         }
     });

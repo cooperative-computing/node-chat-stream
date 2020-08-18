@@ -53,16 +53,14 @@ const Helper = {
   userToUserChat: async (event: any) => {
     let sender = event.sender;
     let receiver = event.receiver;
-    let query = {}
     if (sender && receiver) {
-      query = Helper.userToUserQuery(sender, receiver)
-      let chat_list = await ChatList.findOne(query);
+      let chat_list = event.chat_list_id;
       if (!chat_list) {
-        let data = { chat_type: 'user-user', created_by: sender, receivers: [receiver, sender] };
-        chat_list = new ChatList(data);
+        let query = { chat_type: 'user-user', created_by: sender, receivers: [receiver, sender] };
+        chat_list = new ChatList(query);
         chat_list.save();
+        event.chat_list_id = chat_list._id;
       }
-      event.chat_list_id = chat_list._id;
       Helper.addChat(event);
     }
 

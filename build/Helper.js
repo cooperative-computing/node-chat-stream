@@ -91,28 +91,21 @@ var Helper = {
         });
     },
     userToUserChat: function (event) { return __awaiter(void 0, void 0, void 0, function () {
-        var sender, receiver, query, chat_list, data;
+        var sender, receiver, chat_list, query;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    sender = event.sender;
-                    receiver = event.receiver;
-                    query = {};
-                    if (!(sender && receiver)) return [3 /*break*/, 2];
-                    query = Helper.userToUserQuery(sender, receiver);
-                    return [4 /*yield*/, ChatList_1.default.findOne(query)];
-                case 1:
-                    chat_list = _a.sent();
-                    if (!chat_list) {
-                        data = { chat_type: 'user-user', created_by: sender, receivers: [receiver, sender] };
-                        chat_list = new ChatList_1.default(data);
-                        chat_list.save();
-                    }
+            sender = event.sender;
+            receiver = event.receiver;
+            if (sender && receiver) {
+                chat_list = event.chat_list_id;
+                if (!chat_list) {
+                    query = { chat_type: 'user-user', created_by: sender, receivers: [receiver, sender] };
+                    chat_list = new ChatList_1.default(query);
+                    chat_list.save();
                     event.chat_list_id = chat_list._id;
-                    Helper.addChat(event);
-                    _a.label = 2;
-                case 2: return [2 /*return*/];
+                }
+                Helper.addChat(event);
             }
+            return [2 /*return*/];
         });
     }); },
     userToUserQuery: function (sender, receiver) {
