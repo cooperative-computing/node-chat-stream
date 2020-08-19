@@ -53,37 +53,43 @@ var Helper_1 = __importDefault(require("../Helper"));
 var Users_1 = __importDefault(require("../Models/Users"));
 var ChatListRoutes = express_1.default.Router();
 ChatListRoutes.route("/").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, limit, query, param, user_id, chat_type, paginationData, params, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var page, limit, query, param, user_id, chat_type, paginationData, params, _a, error_1;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 page = req.query.page || 1;
                 limit = req.query.limit || 20;
                 query = {};
                 param = req.query;
                 user_id = param.user_id;
-                if (!(user_id && param.chat_type)) return [3 /*break*/, 5];
+                if (!(user_id && param.chat_type)) return [3 /*break*/, 6];
                 user_id = String(user_id);
-                _a.label = 1;
+                _b.label = 1;
             case 1:
-                _a.trys.push([1, 3, , 4]);
+                _b.trys.push([1, 4, , 5]);
                 chat_type = param.chat_type;
                 query = { chat_type: chat_type, receivers: { $all: [user_id] } };
-                return [4 /*yield*/, ChatList_1.default.paginate(query, { page: page, limit: limit, sort: { createdAt: -1 } })];
+                return [4 /*yield*/, ChatList_1.default.paginate(query, { page: page, limit: limit, sort: { createdAt: -1 }, lean: true })];
             case 2:
-                paginationData = _a.sent();
+                paginationData = _b.sent();
                 params = { chat_type: chat_type, user_id: param.user_id };
-                Helper_1.default.sendPaginationResponse(res, paginationData, params);
-                return [3 /*break*/, 4];
+                //add last msg/chat in chatlist
+                _a = paginationData;
+                return [4 /*yield*/, Helper_1.default.addLastChatInList(paginationData.docs)];
             case 3:
-                error_1 = _a.sent();
+                //add last msg/chat in chatlist
+                _a.docs = _b.sent();
+                Helper_1.default.sendPaginationResponse(res, paginationData, params);
+                return [3 /*break*/, 5];
+            case 4:
+                error_1 = _b.sent();
                 Helper_1.default.sendNotFoundResponse(res, param.chat_type == 'user-group' ? 'Group' : 'Chat list');
-                return [3 /*break*/, 4];
-            case 4: return [3 /*break*/, 6];
-            case 5:
+                return [3 /*break*/, 5];
+            case 5: return [3 /*break*/, 7];
+            case 6:
                 Helper_1.default.sendNotFoundResponse(res, param.chat_type == 'user-group' ? 'Group' : 'Chat list');
-                _a.label = 6;
-            case 6: return [2 /*return*/];
+                _b.label = 7;
+            case 7: return [2 /*return*/];
         }
     });
 }); });
@@ -175,12 +181,12 @@ ChatListRoutes.route("/chat").post(function (req, res, next) { return __awaiter(
 }); });
 //Add ChatList/Group
 ChatListRoutes.route("/add").post(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var body, allIds, data, chatList, getData, e_1;
+    var body, allIds, data, chatList, query, get_chatList, getData, e_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 body = req.body;
-                if (!(body.created_by && body.receivers && body.chat_type)) return [3 /*break*/, 4];
+                if (!(body.created_by && body.receivers && body.chat_type)) return [3 /*break*/, 11];
                 allIds = __spreadArrays(body.receivers, [body.created_by]);
                 data = { chat_type: body.chat_type, created_by: body.created_by, receivers: allIds, name: '', image: '' };
                 if (body.chat_type == 'user-group') {
@@ -189,19 +195,41 @@ ChatListRoutes.route("/add").post(function (req, res, next) { return __awaiter(v
                 }
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 3, , 4]);
+                _a.trys.push([1, 10, , 11]);
+                chatList = void 0;
+                if (!(body.chat_type == 'user-user')) return [3 /*break*/, 7];
+                query = Helper_1.default.userToUserChatListQuery(body.created_by, body.receivers[0]);
+                return [4 /*yield*/, ChatList_1.default.findOne(query)];
+            case 2:
+                get_chatList = _a.sent();
+                console.log("get_chatList - ", get_chatList);
+                if (!!get_chatList) return [3 /*break*/, 5];
+                console.log("add new list");
+                return [4 /*yield*/, new ChatList_1.default(data)];
+            case 3:
+                chatList = _a.sent();
+                return [4 /*yield*/, chatList.save()];
+            case 4:
+                _a.sent();
+                return [3 /*break*/, 6];
+            case 5:
+                chatList = get_chatList;
+                _a.label = 6;
+            case 6: return [3 /*break*/, 8];
+            case 7:
                 chatList = new ChatList_1.default(data);
                 chatList.save();
-                return [4 /*yield*/, ChatList_1.default.find({ _id: chatList._id })];
-            case 2:
+                _a.label = 8;
+            case 8: return [4 /*yield*/, ChatList_1.default.find({ _id: chatList._id })];
+            case 9:
                 getData = _a.sent();
                 Helper_1.default.sendResponse(res, getData);
-                return [3 /*break*/, 4];
-            case 3:
+                return [3 /*break*/, 11];
+            case 10:
                 e_1 = _a.sent();
                 Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
+                return [3 /*break*/, 11];
+            case 11: return [2 /*return*/];
         }
     });
 }); });

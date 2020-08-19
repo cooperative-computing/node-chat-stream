@@ -68,6 +68,9 @@ const Helper = {
   userToUserQuery: (sender, receiver) => {
     return { $or: [{ chat_type: 'user-user', created_by: String(sender), receivers: [String(receiver)] }, { chat_type: 'user-user', created_by: String(receiver), receivers: [String(sender)] }] }
   },
+  userToUserChatListQuery: (sender, receiver) => {
+    return { $or: [{ chat_type: 'user-user', created_by: sender, receivers: [receiver, sender] }, { chat_type: 'user-user', created_by: receiver, receivers: [sender, receiver] }] }
+  },
   getUserId: async (user) => {
     console.log("user ", user);
 
@@ -77,7 +80,19 @@ const Helper = {
   userIdToMongoId: async (user_id) => {
     let getUser = await Users.findOne({ user_id: user_id });
     return getUser._id;
+  },
+  addLastChatInList(list: Array<any>): Promise<any> {
+    return Promise.all(
+      list.map(async (item, index) => {
+        const chat = await Chat.findOne({ chat_list_id: item._id }, { text: 1, sender: 1 }).sort({ createdAt: -1 });
+        item.chat = chat;
+        console.log("item 2", item);
+        return item;
+      })
+    );
+
   }
+
 };
 
 export default Helper;

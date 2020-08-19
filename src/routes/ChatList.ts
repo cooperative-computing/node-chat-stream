@@ -17,9 +17,13 @@ ChatListRoutes.route("/").get(async (req, res, next) => {
     try {
       let chat_type = param.chat_type;
       query = { chat_type, receivers: { $all: [user_id] } };
-      let paginationData = await ChatList.paginate(query, { page, limit, sort: { createdAt: -1 } });
+      let paginationData = await ChatList.paginate(query, { page, limit, sort: { createdAt: -1 }, lean: true });
       let params = { chat_type, user_id: param.user_id }
+      //add last msg/chat in chatlist
+      paginationData.docs = await Helper.addLastChatInList(paginationData.docs);
+
       Helper.sendPaginationResponse(res, paginationData, params);
+
     }
     catch (error) {
       Helper.sendNotFoundResponse(res, param.chat_type == 'user-group' ? 'Group' : 'Chat list');
@@ -97,8 +101,27 @@ ChatListRoutes.route("/add").post(async (req, res, next) => {
       data.image = body.image;
     }
     try {
-      let chatList = new ChatList(data);
-      chatList.save();
+      let chatList;
+
+      if (body.chat_type == 'user-user') {
+        // Not add duplicate chat for user-user
+        let query = Helper.userToUserChatListQuery(body.created_by, body.receivers[0]);
+        let get_chatList = await ChatList.findOne(query);
+        console.log("get_chatList - ", get_chatList)
+        if (!get_chatList) {
+          console.log("add new list")
+
+          chatList = await new ChatList(data);
+          await chatList.save();
+        }
+        else {
+          chatList = get_chatList;
+        }
+      }
+      else {
+        chatList = new ChatList(data);
+        chatList.save();
+      }
       let getData = await ChatList.find({ _id: chatList._id });
       Helper.sendResponse(res, getData);
     }

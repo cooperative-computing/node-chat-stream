@@ -111,6 +111,9 @@ var Helper = {
     userToUserQuery: function (sender, receiver) {
         return { $or: [{ chat_type: 'user-user', created_by: String(sender), receivers: [String(receiver)] }, { chat_type: 'user-user', created_by: String(receiver), receivers: [String(sender)] }] };
     },
+    userToUserChatListQuery: function (sender, receiver) {
+        return { $or: [{ chat_type: 'user-user', created_by: sender, receivers: [receiver, sender] }, { chat_type: 'user-user', created_by: receiver, receivers: [sender, receiver] }] };
+    },
     getUserId: function (user) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             console.log("user ", user);
@@ -129,6 +132,22 @@ var Helper = {
                     return [2 /*return*/, getUser._id];
             }
         });
-    }); }
+    }); },
+    addLastChatInList: function (list) {
+        var _this = this;
+        return Promise.all(list.map(function (item, index) { return __awaiter(_this, void 0, void 0, function () {
+            var chat;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, Chat_1.default.findOne({ chat_list_id: item._id }, { text: 1, sender: 1 }).sort({ createdAt: -1 })];
+                    case 1:
+                        chat = _a.sent();
+                        item.chat = chat;
+                        console.log("item 2", item);
+                        return [2 /*return*/, item];
+                }
+            });
+        }); }));
+    }
 };
 exports.default = Helper;
