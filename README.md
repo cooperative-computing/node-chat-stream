@@ -51,7 +51,7 @@ StartChat(your_project_socket , express_server);
 
 
 ```sh
-socket.on("message", your_method/function);         
+socket.on("user-message", your_method/function);         
 //  for user to user chat
 ```  
 
@@ -77,7 +77,7 @@ socket.emit("node-chat-join", user);
 
 ### For sending messages example  
 ```sh
-socket.on("message", {text: 'text',sender: 'sender_id',receiver: 'receiver_id'});
+socket.on("user-message", {text: 'text',sender: 'sender_id',receiver: 'receiver_id'});
 //  for user to user  
 ```  
 ```sh

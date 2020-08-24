@@ -46,7 +46,7 @@ const Helper = {
     allIds.splice(allIds.indexOf(event.sender), 1);// removed sender
     allIds.forEach((item: any) => {
       if (item && clients[item]) {
-        let channelName = room.chat_type == 'user-group' ? 'group-message' : 'multi-user-message'
+        let channelName = room.chat_type == 'user-group' ? 'group-message' : 'multi-user-message';
         clients[item].forEach((cli: any) => cli.emit(channelName, event));
       }
     });
@@ -73,9 +73,8 @@ const Helper = {
     return { $or: [{ chat_type: 'user-user', created_by: sender, receivers: [receiver, sender] }, { chat_type: 'user-user', created_by: receiver, receivers: [sender, receiver] }] }
   },
   getUserId: async (user) => {
-    console.log("user ", user);
-
     if (user._id) return user._id;
+    if (user.user_id) return user.user_id;
     return '';
   },
   userIdToMongoId: async (user_id) => {
@@ -109,12 +108,9 @@ const Helper = {
       for (let usersIndex = 0; usersIndex < users.length; usersIndex++) {
         if (data[chatIndex].sender == users[usersIndex].id) {
           data[chatIndex].user = users[usersIndex];
-          // console.log("all data -= ", data);
-
         }
       }
     }
-    // console.log("all data -= ", data);
     return data;
   }
 

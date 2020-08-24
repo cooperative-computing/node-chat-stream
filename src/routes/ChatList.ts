@@ -109,9 +109,7 @@ ChatListRoutes.route("/add").post(async (req, res, next) => {
         // Not add duplicate chat for user-user
         let query = Helper.userToUserChatListQuery(body.created_by, body.receivers[0]);
         let get_chatList = await ChatList.findOne(query);
-        console.log("get_chatList - ", get_chatList)
         if (!get_chatList) {
-          console.log("add new list")
 
           chatList = await new ChatList(data);
           await chatList.save();

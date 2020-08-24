@@ -1,4 +1,3 @@
-import SocketIOFileUpload from 'socketio-file-upload';
 //Models
 import ChatList from './Models/ChatList';
 
@@ -14,22 +13,10 @@ const Socket_IO = (socket) => {
   socket.on("connection", async client => {
     console.log("- connected  to socket -");
 
-    var uploader = new SocketIOFileUpload();
-    uploader.dir = "./uploads";
-    uploader.listen(client);
-
-    // Do something when a file is saved:
-    uploader.on("saved", function (event) {
-      console.log("saved ", event.file);
-    });
-
-    // Error handler:
-    uploader.on("error", function (event) {
-      console.log("Error from uploader", event);
-    });
-
     client.on("node-chat-join", async e => {
       let user_id = await Helper.getUserId(e);
+      console.log(" node-chat-join call ", user_id);
+
       if (!user_id) return false;
       client.user_id = user_id;
       if (clients[user_id]) {
@@ -51,14 +38,15 @@ const Socket_IO = (socket) => {
     });
 
     // user to user start
-    client.on("message", async event => {
-      console.log("message ", event);
-      let targetId = event.receiver;
-      if (targetId && clients[targetId]) {
-        clients[targetId].forEach(cli => {
-          cli.emit("message", event);
+    client.on("user-message", async event => {
+      console.log("user-message ", event);
+      let ids = [event.receiver];
+      if (event.includeSender) ids.push(event.sender);
+      ids.forEach((id: any) => {
+        clients[id].forEach(cli => {
+          cli.emit("user-message", event);
         });
-      }
+      });
       await Helper.userToUserChat(event);
     });
     // user to user end
@@ -76,9 +64,9 @@ const Socket_IO = (socket) => {
 
 
     client.on("group-message", async (data) => {
-      client.broadcast.emit('group-message', data);
       let room = await ChatList.findOne({ _id: data.chat_list_id });
       if (room._id) {
+        Helper.sendMultiUserMsg(room, clients, data);
         Helper.addChat(data); //save chat to the database
       }
     });

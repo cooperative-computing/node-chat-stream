@@ -64,7 +64,6 @@ ChatRoutes.route("/").get(function (req, res, next) { return __awaiter(void 0, v
                 return [4 /*yield*/, ChatList_1.default.findOne({ _id: chat_list_id })];
             case 1:
                 get_chatList = _a.sent();
-                console.log("get_chatList ", get_chatList);
                 return [4 /*yield*/, Chat_1.default.paginate(query, { page: page, limit: limit, sort: { createdAt: -1 }, lean: true })];
             case 2:
                 paginationData = _a.sent();

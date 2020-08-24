@@ -212,9 +212,7 @@ ChatListRoutes.route("/add").post(function (req, res, next) { return __awaiter(v
                 return [4 /*yield*/, ChatList_1.default.findOne(query)];
             case 2:
                 get_chatList = _a.sent();
-                console.log("get_chatList - ", get_chatList);
                 if (!!get_chatList) return [3 /*break*/, 5];
-                console.log("add new list");
                 return [4 /*yield*/, new ChatList_1.default(data)];
             case 3:
                 chatList = _a.sent();

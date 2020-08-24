@@ -19,7 +19,6 @@ ChatRoutes.route("/").get(async (req, res, next) => {
   if (chat_list_id && userDetailsUrl) {
     query = { chat_list_id };
     let get_chatList = await ChatList.findOne({ _id: chat_list_id });
-    console.log("get_chatList ", get_chatList);
     let paginationData = await Chat.paginate(query, { page, limit, sort: { createdAt: -1 }, lean: true });
     let getUserDetails = await Helper.getUserDetails(userDetailsUrl, get_chatList.receivers);
     paginationData.docs = Helper.chatAddUsers(paginationData.docs, getUserDetails);

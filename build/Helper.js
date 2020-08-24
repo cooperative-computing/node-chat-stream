@@ -117,9 +117,10 @@ var Helper = {
     },
     getUserId: function (user) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            console.log("user ", user);
             if (user._id)
                 return [2 /*return*/, user._id];
+            if (user.user_id)
+                return [2 /*return*/, user.user_id];
             return [2 /*return*/, ''];
         });
     }); },
@@ -179,11 +180,9 @@ var Helper = {
             for (var usersIndex = 0; usersIndex < users.length; usersIndex++) {
                 if (data[chatIndex].sender == users[usersIndex].id) {
                     data[chatIndex].user = users[usersIndex];
-                    // console.log("all data -= ", data);
                 }
             }
         }
-        // console.log("all data -= ", data);
         return data;
     }
 };

@@ -39,7 +39,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var socketio_file_upload_1 = __importDefault(require("socketio-file-upload"));
 //Models
 var ChatList_1 = __importDefault(require("./Models/ChatList"));
 var Helper_1 = __importDefault(require("./Helper"));
@@ -47,20 +46,8 @@ var Socket_IO = function (socket) {
     var clients = [];
     //setup event listener
     socket.on("connection", function (client) { return __awaiter(void 0, void 0, void 0, function () {
-        var uploader;
         return __generator(this, function (_a) {
             console.log("- connected  to socket -");
-            uploader = new socketio_file_upload_1.default();
-            uploader.dir = "./uploads";
-            uploader.listen(client);
-            // Do something when a file is saved:
-            uploader.on("saved", function (event) {
-                console.log("saved ", event.file);
-            });
-            // Error handler:
-            uploader.on("error", function (event) {
-                console.log("Error from uploader", event);
-            });
             client.on("node-chat-join", function (e) { return __awaiter(void 0, void 0, void 0, function () {
                 var user_id;
                 return __generator(this, function (_a) {
@@ -68,6 +55,7 @@ var Socket_IO = function (socket) {
                         case 0: return [4 /*yield*/, Helper_1.default.getUserId(e)];
                         case 1:
                             user_id = _a.sent();
+                            console.log(" node-chat-join call ", user_id);
                             if (!user_id)
                                 return [2 /*return*/, false];
                             client.user_id = user_id;
@@ -93,18 +81,20 @@ var Socket_IO = function (socket) {
                 }
             });
             // user to user start
-            client.on("message", function (event) { return __awaiter(void 0, void 0, void 0, function () {
-                var targetId;
+            client.on("user-message", function (event) { return __awaiter(void 0, void 0, void 0, function () {
+                var ids;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            console.log("message ", event);
-                            targetId = event.receiver;
-                            if (targetId && clients[targetId]) {
-                                clients[targetId].forEach(function (cli) {
-                                    cli.emit("message", event);
+                            console.log("user-message ", event);
+                            ids = [event.receiver];
+                            if (event.includeSender)
+                                ids.push(event.sender);
+                            ids.forEach(function (id) {
+                                clients[id].forEach(function (cli) {
+                                    cli.emit("user-message", event);
                                 });
-                            }
+                            });
                             return [4 /*yield*/, Helper_1.default.userToUserChat(event)];
                         case 1:
                             _a.sent();
@@ -134,12 +124,11 @@ var Socket_IO = function (socket) {
                 var room;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0:
-                            client.broadcast.emit('group-message', data);
-                            return [4 /*yield*/, ChatList_1.default.findOne({ _id: data.chat_list_id })];
+                        case 0: return [4 /*yield*/, ChatList_1.default.findOne({ _id: data.chat_list_id })];
                         case 1:
                             room = _a.sent();
                             if (room._id) {
+                                Helper_1.default.sendMultiUserMsg(room, clients, data);
                                 Helper_1.default.addChat(data); //save chat to the database
                             }
                             return [2 /*return*/];
