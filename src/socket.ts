@@ -76,9 +76,9 @@ const Socket_IO = (socket) => {
 
 
     client.on("group-message", async (data) => {
+      client.broadcast.emit('group-message', data);
       let room = await ChatList.findOne({ _id: data.chat_list_id });
       if (room._id) {
-        Helper.sendMultiUserMsg(room, clients, data);
         Helper.addChat(data); //save chat to the database
       }
     });

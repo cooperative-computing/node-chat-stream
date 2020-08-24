@@ -160,34 +160,44 @@ ChatListRoutes.route("/user-user-chat").get(function (req, res, next) { return _
 }); });
 //Add Chat
 ChatListRoutes.route("/chat").post(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var body, sender, chat_list_id, text, chatList;
-    return __generator(this, function (_a) {
-        body = req.body;
-        sender = body.sender;
-        chat_list_id = body.chat_list_id;
-        text = body.text;
-        if (sender && chat_list_id && text) {
-            try {
-                chatList = new Chat_1.default({ sender: sender, chat_list_id: chat_list_id, text: text });
-                chatList.save();
-                Helper_1.default.messageResponse(res, 'Added chat successfully!');
-            }
-            catch (e) {
-                Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
-            }
-        }
-        return [2 /*return*/];
-    });
-}); });
-//Add ChatList/Group
-ChatListRoutes.route("/add").post(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var body, allIds, data, chatList, query, get_chatList, getData, e_1;
+    var body, sender, chat_list_id, text, chatList, e_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 body = req.body;
-                if (!(body.created_by && body.receivers && body.chat_type)) return [3 /*break*/, 11];
-                allIds = __spreadArrays(body.receivers, [body.created_by]);
+                sender = body.sender;
+                chat_list_id = body.chat_list_id;
+                text = body.text;
+                if (!(sender && chat_list_id && text)) return [3 /*break*/, 5];
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 4, , 5]);
+                return [4 /*yield*/, new Chat_1.default({ sender: sender, chat_list_id: chat_list_id, text: text })];
+            case 2:
+                chatList = _a.sent();
+                return [4 /*yield*/, chatList.save()];
+            case 3:
+                _a.sent();
+                Helper_1.default.sendResponse(res, chatList);
+                return [3 /*break*/, 5];
+            case 4:
+                e_1 = _a.sent();
+                Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); });
+//Add ChatList/Group
+ChatListRoutes.route("/add").post(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var body, receivers, allIds, data, chatList, query, get_chatList, getData, e_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                body = req.body;
+                receivers = body.receivers || [];
+                if (!(body.created_by && body.receivers && body.chat_type)) return [3 /*break*/, 12];
+                allIds = __spreadArrays(receivers, [body.created_by]);
                 data = { chat_type: body.chat_type, created_by: body.created_by, receivers: allIds, name: '', image: '' };
                 if (body.chat_type == 'user-group') {
                     data.name = body.name;
@@ -226,16 +236,20 @@ ChatListRoutes.route("/add").post(function (req, res, next) { return __awaiter(v
                 Helper_1.default.sendResponse(res, getData);
                 return [3 /*break*/, 11];
             case 10:
-                e_1 = _a.sent();
+                e_2 = _a.sent();
                 Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
                 return [3 /*break*/, 11];
-            case 11: return [2 /*return*/];
+            case 11: return [3 /*break*/, 13];
+            case 12:
+                Helper_1.default.errorResponse(res, 'created_by or chat_type is missing/');
+                _a.label = 13;
+            case 13: return [2 /*return*/];
         }
     });
 }); });
 //Update receivers in ChatList/Group
 ChatListRoutes.route("/update").post(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var chat_list_id, receivers, e_2;
+    var chat_list_id, receivers, e_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -251,7 +265,7 @@ ChatListRoutes.route("/update").post(function (req, res, next) { return __awaite
                 Helper_1.default.messageResponse(res, 'Receivers Updated successfully!');
                 return [3 /*break*/, 4];
             case 3:
-                e_2 = _a.sent();
+                e_3 = _a.sent();
                 Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
                 return [3 /*break*/, 4];
             case 4: return [3 /*break*/, 6];
@@ -264,7 +278,7 @@ ChatListRoutes.route("/update").post(function (req, res, next) { return __awaite
 }); });
 //Fetch Users for ChatList/Group
 ChatListRoutes.route("/users").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, limit, chat_list_id, chatList, users, e_3;
+    var page, limit, chat_list_id, chatList, users, e_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -284,7 +298,7 @@ ChatListRoutes.route("/users").get(function (req, res, next) { return __awaiter(
                 Helper_1.default.sendPaginationResponse(res, users);
                 return [3 /*break*/, 5];
             case 4:
-                e_3 = _a.sent();
+                e_4 = _a.sent();
                 Helper_1.default.errorResponse(res, 'group/chat_list not found');
                 return [3 /*break*/, 5];
             case 5: return [3 /*break*/, 7];
@@ -295,7 +309,7 @@ ChatListRoutes.route("/users").get(function (req, res, next) { return __awaiter(
 }); });
 //Remove ChatList/Group
 ChatListRoutes.route("/remove").post(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var ids, query, e_4;
+    var ids, query, e_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -314,7 +328,7 @@ ChatListRoutes.route("/remove").post(function (req, res, next) { return __awaite
                 Helper_1.default.messageResponse(res, 'Removed successfully!');
                 return [3 /*break*/, 5];
             case 4:
-                e_4 = _a.sent();
+                e_5 = _a.sent();
                 Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
                 return [3 /*break*/, 5];
             case 5: return [3 /*break*/, 7];
@@ -322,6 +336,34 @@ ChatListRoutes.route("/remove").post(function (req, res, next) { return __awaite
                 Helper_1.default.errorResponse(res, 'ids missing.');
                 _a.label = 7;
             case 7: return [2 /*return*/];
+        }
+    });
+}); });
+//Fetch Chat for user to multi-user and user to group
+ChatListRoutes.route("/get_details").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var chat_type, created_by, group_name, query, chat_list_details;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                chat_type = req.query.chat_type;
+                created_by = req.query.created_by;
+                group_name = req.query.group_name;
+                query = {};
+                if (!(chat_type && created_by)) return [3 /*break*/, 2];
+                created_by = String(created_by);
+                query = { created_by: created_by, chat_type: chat_type };
+                if (group_name)
+                    query.name = group_name;
+                return [4 /*yield*/, ChatList_1.default.findOne(query)];
+            case 1:
+                chat_list_details = _a.sent();
+                console.log("get_details ", chat_list_details);
+                Helper_1.default.sendResponse(res, chat_list_details);
+                return [3 /*break*/, 3];
+            case 2:
+                Helper_1.default.sendNotFoundResponse(res, 'created_by or chat_type missing.');
+                _a.label = 3;
+            case 3: return [2 /*return*/];
         }
     });
 }); });

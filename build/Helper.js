@@ -53,6 +53,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Chat_1 = __importDefault(require("./Models/Chat"));
 var Users_1 = __importDefault(require("./Models/Users"));
 var ChatList_1 = __importDefault(require("./Models/ChatList"));
+var node_fetch_1 = __importDefault(require("node-fetch"));
 var Helper = {
     sendResponse: function (res, data) {
         res.statusCode = 200;
@@ -143,11 +144,47 @@ var Helper = {
                     case 1:
                         chat = _a.sent();
                         item.chat = chat;
-                        console.log("item 2", item);
                         return [2 /*return*/, item];
                 }
             });
         }); }));
+    },
+    getUserDetails: function (url, ids) { return __awaiter(void 0, void 0, void 0, function () {
+        var users, headers, getUsers;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    url = url + '?';
+                    ids.map(function (id) { return url += 'ids[]=' + parseInt(id) + '&'; });
+                    users = [];
+                    headers = {
+                        "Content-Type": "application/json",
+                    };
+                    return [4 /*yield*/, node_fetch_1.default(url, { method: 'get', headers: headers })];
+                case 1:
+                    getUsers = _a.sent();
+                    return [4 /*yield*/, getUsers.json()];
+                case 2:
+                    getUsers = _a.sent();
+                    if (getUsers.users)
+                        users = getUsers.users;
+                    return [2 /*return*/, users];
+            }
+        });
+    }); },
+    chatAddUsers: function (data, users) {
+        if (data === void 0) { data = []; }
+        if (users === void 0) { users = []; }
+        for (var chatIndex = 0; chatIndex < data.length; chatIndex++) {
+            for (var usersIndex = 0; usersIndex < users.length; usersIndex++) {
+                if (data[chatIndex].sender == users[usersIndex].id) {
+                    data[chatIndex].user = users[usersIndex];
+                    // console.log("all data -= ", data);
+                }
+            }
+        }
+        // console.log("all data -= ", data);
+        return data;
     }
 };
 exports.default = Helper;

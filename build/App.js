@@ -10,6 +10,7 @@ var socketio_file_upload_1 = __importDefault(require("socketio-file-upload"));
 var UserRoutes_1 = __importDefault(require("./routes/UserRoutes"));
 var ChatList_1 = __importDefault(require("./routes/ChatList"));
 var Upload_1 = __importDefault(require("./routes/Upload"));
+var Chat_1 = __importDefault(require("./routes/Chat"));
 var socket_1 = __importDefault(require("./socket"));
 var index_1 = __importDefault(require("./Config/index"));
 var SetChatConfig = index_1.default.SetChatConfig;
@@ -23,6 +24,7 @@ var NodeChatCtream = function (socket, app) {
     app.use("/chat-stream/users", UserRoutes_1.default);
     app.use("/chat-stream/chatList", ChatList_1.default);
     app.use("/chat-stream/upload", Upload_1.default);
+    app.use("/chat-stream/chat", Chat_1.default);
     app.use(socketio_file_upload_1.default.router);
     socket_1.default(socket);
 };

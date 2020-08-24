@@ -134,11 +134,12 @@ var Socket_IO = function (socket) {
                 var room;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, ChatList_1.default.findOne({ _id: data.chat_list_id })];
+                        case 0:
+                            client.broadcast.emit('group-message', data);
+                            return [4 /*yield*/, ChatList_1.default.findOne({ _id: data.chat_list_id })];
                         case 1:
                             room = _a.sent();
                             if (room._id) {
-                                Helper_1.default.sendMultiUserMsg(room, clients, data);
                                 Helper_1.default.addChat(data); //save chat to the database
                             }
                             return [2 /*return*/];

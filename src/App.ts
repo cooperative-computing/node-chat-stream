@@ -4,6 +4,7 @@ import SocketIOFileUpload from 'socketio-file-upload';
 import UserRoutes from './routes/UserRoutes';
 import ChatListRoutes from './routes/ChatList';
 import UploadRoutes from './routes/Upload';
+import ChatRoutes from './routes/Chat';
 
 import Socket_IO from './socket';
 import Config from './Config/index';
@@ -19,6 +20,7 @@ const NodeChatCtream = (socket, app) => {
   app.use("/chat-stream/users", UserRoutes);
   app.use("/chat-stream/chatList", ChatListRoutes);
   app.use("/chat-stream/upload", UploadRoutes);
+  app.use("/chat-stream/chat", ChatRoutes);
   app.use(SocketIOFileUpload.router)
 
   Socket_IO(socket);

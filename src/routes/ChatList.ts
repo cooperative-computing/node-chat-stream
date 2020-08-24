@@ -80,9 +80,9 @@ ChatListRoutes.route("/chat").post(async (req, res, next) => {
   let text = body.text;
   if (sender && chat_list_id && text) {
     try {
-      let chatList = new Chat({ sender, chat_list_id, text });
-      chatList.save();
-      Helper.messageResponse(res, 'Added chat successfully!');
+      let chatList = await new Chat({ sender, chat_list_id, text });
+      await chatList.save();
+      Helper.sendResponse(res, chatList);
     }
     catch (e) {
       Helper.errorResponse(res, 'Something went wrong.Please try again.');
@@ -93,8 +93,10 @@ ChatListRoutes.route("/chat").post(async (req, res, next) => {
 //Add ChatList/Group
 ChatListRoutes.route("/add").post(async (req, res, next) => {
   let body = req.body;
+  let receivers = body.receivers || [];
   if (body.created_by && body.receivers && body.chat_type) {
-    let allIds = [...body.receivers, body.created_by];
+
+    let allIds = [...receivers, body.created_by];
     let data = { chat_type: body.chat_type, created_by: body.created_by, receivers: allIds, name: '', image: '' };
     if (body.chat_type == 'user-group') {
       data.name = body.name;
@@ -129,6 +131,7 @@ ChatListRoutes.route("/add").post(async (req, res, next) => {
       Helper.errorResponse(res, 'Something went wrong.Please try again.');
     }
   }
+  else Helper.errorResponse(res, 'created_by or chat_type is missing/');
 });
 
 //Update receivers in ChatList/Group
@@ -186,6 +189,24 @@ ChatListRoutes.route("/remove").post(async (req, res, next) => {
     }
   }
   else Helper.errorResponse(res, 'ids missing.');
+});
+
+
+//Fetch Chat for user to multi-user and user to group
+ChatListRoutes.route("/get_details").get(async (req, res, next) => {
+  let chat_type = req.query.chat_type;
+  let created_by = req.query.created_by;
+  let group_name = req.query.group_name;
+  let query: any = {};
+  if (chat_type && created_by) {
+    created_by = String(created_by);
+    query = { created_by, chat_type };
+    if (group_name) query.name = group_name;
+    let chat_list_details = await ChatList.findOne(query);
+    console.log("get_details ", chat_list_details)
+    Helper.sendResponse(res, chat_list_details);
+  }
+  else Helper.sendNotFoundResponse(res, 'created_by or chat_type missing.');
 });
 
 

@@ -1,6 +1,7 @@
 import Chat from './Models/Chat';
 import Users from './Models/Users';
 import ChatList from './Models/ChatList';
+import fetch from 'node-fetch';
 
 const Helper = {
   sendResponse: (res: any, data: any) => {
@@ -86,11 +87,35 @@ const Helper = {
       list.map(async (item, index) => {
         const chat = await Chat.findOne({ chat_list_id: item._id }, { text: 1, sender: 1 }).sort({ createdAt: -1 });
         item.chat = chat;
-        console.log("item 2", item);
         return item;
       })
     );
 
+  },
+  getUserDetails: async (url, ids) => {
+    url = url + '?'
+    ids.map((id) => url += 'ids[]=' + parseInt(id) + '&')
+    let users: any = [];
+    const headers = {
+      "Content-Type": "application/json",
+    }
+    let getUsers = await fetch(url, { method: 'get', headers });
+    getUsers = await getUsers.json();
+    if (getUsers.users) users = getUsers.users;
+    return users;
+  },
+  chatAddUsers: (data: any = [], users: any = []) => {
+    for (let chatIndex = 0; chatIndex < data.length; chatIndex++) {
+      for (let usersIndex = 0; usersIndex < users.length; usersIndex++) {
+        if (data[chatIndex].sender == users[usersIndex].id) {
+          data[chatIndex].user = users[usersIndex];
+          // console.log("all data -= ", data);
+
+        }
+      }
+    }
+    // console.log("all data -= ", data);
+    return data;
   }
 
 };
