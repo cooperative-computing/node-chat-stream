@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NodeChatSteam = void 0;
 var DB_1 = __importDefault(require("./Config/DB"));
-var socketio_file_upload_1 = __importDefault(require("socketio-file-upload"));
 //Routes
 var UserRoutes_1 = __importDefault(require("./routes/UserRoutes"));
 var ChatList_1 = __importDefault(require("./routes/ChatList"));
@@ -25,7 +24,6 @@ var NodeChatCtream = function (socket, app) {
     app.use("/chat-stream/chatList", ChatList_1.default);
     app.use("/chat-stream/upload", Upload_1.default);
     app.use("/chat-stream/chat", Chat_1.default);
-    app.use(socketio_file_upload_1.default.router);
     socket_1.default(socket);
 };
 exports.NodeChatSteam = {
