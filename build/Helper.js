@@ -51,7 +51,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Chat_1 = __importDefault(require("./Models/Chat"));
-var Users_1 = __importDefault(require("./Models/Users"));
 var ChatList_1 = __importDefault(require("./Models/ChatList"));
 var node_fetch_1 = __importDefault(require("node-fetch"));
 var Helper = {
@@ -110,9 +109,13 @@ var Helper = {
         });
     }); },
     userToUserQuery: function (sender, receiver) {
+        sender = String(sender);
+        receiver = String(receiver);
         return { $or: [{ chat_type: 'user-user', created_by: String(sender), receivers: [String(receiver)] }, { chat_type: 'user-user', created_by: String(receiver), receivers: [String(sender)] }] };
     },
     userToUserChatListQuery: function (sender, receiver) {
+        sender = String(sender);
+        receiver = String(receiver);
         return { $or: [{ chat_type: 'user-user', created_by: sender, receivers: [receiver, sender] }, { chat_type: 'user-user', created_by: receiver, receivers: [sender, receiver] }] };
     },
     getUserId: function (user) { return __awaiter(void 0, void 0, void 0, function () {
@@ -122,17 +125,6 @@ var Helper = {
             if (user.user_id)
                 return [2 /*return*/, user.user_id];
             return [2 /*return*/, ''];
-        });
-    }); },
-    userIdToMongoId: function (user_id) { return __awaiter(void 0, void 0, void 0, function () {
-        var getUser;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, Users_1.default.findOne({ user_id: user_id })];
-                case 1:
-                    getUser = _a.sent();
-                    return [2 /*return*/, getUser._id];
-            }
         });
     }); },
     addLastChatInList: function (list) {

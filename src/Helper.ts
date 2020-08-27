@@ -1,5 +1,4 @@
 import Chat from './Models/Chat';
-import Users from './Models/Users';
 import ChatList from './Models/ChatList';
 import fetch from 'node-fetch';
 
@@ -67,19 +66,19 @@ const Helper = {
 
   },
   userToUserQuery: (sender, receiver) => {
+    sender = String(sender);
+    receiver = String(receiver);
     return { $or: [{ chat_type: 'user-user', created_by: String(sender), receivers: [String(receiver)] }, { chat_type: 'user-user', created_by: String(receiver), receivers: [String(sender)] }] }
   },
   userToUserChatListQuery: (sender, receiver) => {
+    sender = String(sender);
+    receiver = String(receiver);
     return { $or: [{ chat_type: 'user-user', created_by: sender, receivers: [receiver, sender] }, { chat_type: 'user-user', created_by: receiver, receivers: [sender, receiver] }] }
   },
   getUserId: async (user) => {
     if (user._id) return user._id;
     if (user.user_id) return user.user_id;
     return '';
-  },
-  userIdToMongoId: async (user_id) => {
-    let getUser = await Users.findOne({ user_id: user_id });
-    return getUser._id;
   },
   addLastChatInList(list: Array<any>): Promise<any> {
     return Promise.all(

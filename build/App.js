@@ -6,9 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NodeChatSteam = void 0;
 var DB_1 = __importDefault(require("./Config/DB"));
 //Routes
-var UserRoutes_1 = __importDefault(require("./routes/UserRoutes"));
 var ChatList_1 = __importDefault(require("./routes/ChatList"));
-var Upload_1 = __importDefault(require("./routes/Upload"));
 var Chat_1 = __importDefault(require("./routes/Chat"));
 var socket_1 = __importDefault(require("./socket"));
 var index_1 = __importDefault(require("./Config/index"));
@@ -20,9 +18,7 @@ var NodeChatCtream = function (socket, app) {
     else
         throw new Error("Databse URL not found.");
     //routes
-    app.use("/chat-stream/users", UserRoutes_1.default);
     app.use("/chat-stream/chatList", ChatList_1.default);
-    app.use("/chat-stream/upload", Upload_1.default);
     app.use("/chat-stream/chat", Chat_1.default);
     socket_1.default(socket);
 };

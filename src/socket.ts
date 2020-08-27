@@ -11,11 +11,10 @@ const Socket_IO = (socket) => {
   var clients: any[] = [];
   //setup event listener
   socket.on("connection", async client => {
-    console.log("- connected  to socket -");
 
     client.on("node-chat-join", async e => {
       let user_id = await Helper.getUserId(e);
-      console.log(" node-chat-join call ", user_id);
+      console.log("node-chat-join ", user_id);
 
       if (!user_id) return false;
       client.user_id = user_id;
@@ -24,7 +23,6 @@ const Socket_IO = (socket) => {
       } else {
         clients[user_id] = [client];
       }
-      console.log("node-chat-join complete");
     });
 
     client.on("disconnect", function () {
@@ -39,14 +37,15 @@ const Socket_IO = (socket) => {
 
     // user to user start
     client.on("user-message", async event => {
-      console.log("user-message ", event);
       let ids = [event.receiver];
-      if (event.includeSender) ids.push(event.sender);
-      ids.forEach((id: any) => {
-        clients[id].forEach(cli => {
-          cli.emit("user-message", event);
+      if (event.include_sender) ids.push(event.sender);
+      if (ids && ids.length > 0) {
+        ids.forEach((id: any) => {
+          clients[id].forEach(cli => {
+            cli.emit("user-message", event);
+          });
         });
-      });
+      }
       await Helper.userToUserChat(event);
     });
     // user to user end
@@ -62,7 +61,7 @@ const Socket_IO = (socket) => {
     });
     // user to multi user end
 
-
+    // user to group start
     client.on("group-message", async (data) => {
       let room = await ChatList.findOne({ _id: data.chat_list_id });
       if (room._id) {
@@ -70,17 +69,11 @@ const Socket_IO = (socket) => {
         Helper.addChat(data); //save chat to the database
       }
     });
-
-
+    // user to group end
 
 
   });
 
-
-
-
-
 }
-
 
 export default Socket_IO;

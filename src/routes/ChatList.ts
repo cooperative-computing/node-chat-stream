@@ -2,7 +2,6 @@ import express from 'express';
 import ChatList from '../Models/ChatList';
 import Chat from '../Models/Chat';
 import Helper from '../Helper';
-import Users from '../Models/Users';
 
 const ChatListRoutes = express.Router();
 
@@ -61,8 +60,6 @@ ChatListRoutes.route("/user-user-chat").get(async (req, res, next) => {
       query = Helper.userToUserQuery(sender, receiver);
       let chat_list = await ChatList.findOne(query);
       let paginationData = await Chat.paginate({ chat_list_id: chat_list._id }, { page, limit, sort: { createdAt: -1 } });
-      let getData = await Chat.populate(paginationData.docs, 'sender');
-      paginationData.doc = getData;
       Helper.sendPaginationResponse(res, paginationData, { sender, receiver });
     }
     catch (error) {
@@ -151,25 +148,6 @@ ChatListRoutes.route("/update").post(async (req, res, next) => {
   else Helper.errorResponse(res, 'Something went wrong.Please try again.');
 });
 
-//Fetch Users for ChatList/Group
-ChatListRoutes.route("/users").get(async (req, res, next) => {
-  let page = req.query.page || 1;
-  let limit = req.query.limit || 20;
-  let chat_list_id = req.query.chat_list_id;
-  if (chat_list_id) {
-    try {
-      let chatList = await ChatList.findOne({ _id: chat_list_id });
-      let users = await Users.paginate({ _id: { $not: { $in: chatList.receivers } } }, { page, limit });
-      Helper.sendPaginationResponse(res, users);
-    }
-    catch (e) {
-      Helper.errorResponse(res, 'group/chat_list not found');
-    }
-
-  }
-  else return Helper.errorResponse(res, 'chat_list_id missing');
-
-});
 
 
 //Remove ChatList/Group

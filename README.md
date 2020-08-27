@@ -65,19 +65,17 @@ socket.on("group-message", your_method/function);
 //  group chat  
 ```  
 
- 
 
-4-creat user with `/chat-stream/users` api  
-
-5- 
+4- 
 ```sh
-socket.emit("node-chat-join", user);
-//user created in step 4   
+socket.emit("node-chat-join", {user_id: 'user_id'});
 ```  
 
 ### For sending messages example  
 ```sh
-socket.on("user-message", {text: 'text',sender: 'sender_id',receiver: 'receiver_id'});
+socket.on("user-message", {text: 'text',sender: 'sender_id',receiver: 'receiver_id', chat_list_id: 'chat_list_id'});
+// chat_list_id is optional in user to user
+
 //  for user to user  
 ```  
 ```sh

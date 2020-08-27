@@ -47,7 +47,6 @@ var Socket_IO = function (socket) {
     //setup event listener
     socket.on("connection", function (client) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            console.log("- connected  to socket -");
             client.on("node-chat-join", function (e) { return __awaiter(void 0, void 0, void 0, function () {
                 var user_id;
                 return __generator(this, function (_a) {
@@ -55,7 +54,7 @@ var Socket_IO = function (socket) {
                         case 0: return [4 /*yield*/, Helper_1.default.getUserId(e)];
                         case 1:
                             user_id = _a.sent();
-                            console.log(" node-chat-join call ", user_id);
+                            console.log("node-chat-join ", user_id);
                             if (!user_id)
                                 return [2 /*return*/, false];
                             client.user_id = user_id;
@@ -65,7 +64,6 @@ var Socket_IO = function (socket) {
                             else {
                                 clients[user_id] = [client];
                             }
-                            console.log("node-chat-join complete");
                             return [2 /*return*/];
                     }
                 });
@@ -86,15 +84,16 @@ var Socket_IO = function (socket) {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            console.log("user-message ", event);
                             ids = [event.receiver];
-                            if (event.includeSender)
+                            if (event.include_sender)
                                 ids.push(event.sender);
-                            ids.forEach(function (id) {
-                                clients[id].forEach(function (cli) {
-                                    cli.emit("user-message", event);
+                            if (ids && ids.length > 0) {
+                                ids.forEach(function (id) {
+                                    clients[id].forEach(function (cli) {
+                                        cli.emit("user-message", event);
+                                    });
                                 });
-                            });
+                            }
                             return [4 /*yield*/, Helper_1.default.userToUserChat(event)];
                         case 1:
                             _a.sent();
@@ -120,6 +119,7 @@ var Socket_IO = function (socket) {
                 });
             }); });
             // user to multi user end
+            // user to group start
             client.on("group-message", function (data) { return __awaiter(void 0, void 0, void 0, function () {
                 var room;
                 return __generator(this, function (_a) {

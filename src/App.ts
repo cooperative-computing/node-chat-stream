@@ -1,8 +1,6 @@
 import Connect from './Config/DB';
 //Routes
-import UserRoutes from './routes/UserRoutes';
 import ChatListRoutes from './routes/ChatList';
-import UploadRoutes from './routes/Upload';
 import ChatRoutes from './routes/Chat';
 
 import Socket_IO from './socket';
@@ -16,9 +14,7 @@ const NodeChatCtream = (socket, app) => {
   else throw new Error("Databse URL not found.");
 
   //routes
-  app.use("/chat-stream/users", UserRoutes);
   app.use("/chat-stream/chatList", ChatListRoutes);
-  app.use("/chat-stream/upload", UploadRoutes);
   app.use("/chat-stream/chat", ChatRoutes);
 
   Socket_IO(socket);

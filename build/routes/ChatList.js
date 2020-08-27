@@ -50,7 +50,6 @@ var express_1 = __importDefault(require("express"));
 var ChatList_1 = __importDefault(require("../Models/ChatList"));
 var Chat_1 = __importDefault(require("../Models/Chat"));
 var Helper_1 = __importDefault(require("../Helper"));
-var Users_1 = __importDefault(require("../Models/Users"));
 var ChatListRoutes = express_1.default.Router();
 ChatListRoutes.route("/").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var page, limit, query, param, user_id, chat_type, paginationData, params, _a, error_1;
@@ -119,7 +118,7 @@ ChatListRoutes.route("/chat").get(function (req, res, next) { return __awaiter(v
 }); });
 //Fetch Chat for user to user
 ChatListRoutes.route("/user-user-chat").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, limit, query, param, sender, receiver, chat_list, paginationData, getData, error_2;
+    var page, limit, query, param, sender, receiver, chat_list, paginationData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -129,10 +128,10 @@ ChatListRoutes.route("/user-user-chat").get(function (req, res, next) { return _
                 param = req.query;
                 sender = param.sender;
                 receiver = param.receiver;
-                if (!(sender && receiver)) return [3 /*break*/, 7];
+                if (!(sender && receiver)) return [3 /*break*/, 6];
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 5, , 6]);
+                _a.trys.push([1, 4, , 5]);
                 query = Helper_1.default.userToUserQuery(sender, receiver);
                 return [4 /*yield*/, ChatList_1.default.findOne(query)];
             case 2:
@@ -140,21 +139,17 @@ ChatListRoutes.route("/user-user-chat").get(function (req, res, next) { return _
                 return [4 /*yield*/, Chat_1.default.paginate({ chat_list_id: chat_list._id }, { page: page, limit: limit, sort: { createdAt: -1 } })];
             case 3:
                 paginationData = _a.sent();
-                return [4 /*yield*/, Chat_1.default.populate(paginationData.docs, 'sender')];
-            case 4:
-                getData = _a.sent();
-                paginationData.doc = getData;
                 Helper_1.default.sendPaginationResponse(res, paginationData, { sender: sender, receiver: receiver });
-                return [3 /*break*/, 6];
-            case 5:
+                return [3 /*break*/, 5];
+            case 4:
                 error_2 = _a.sent();
                 Helper_1.default.sendNotFoundResponse(res, 'message');
-                return [3 /*break*/, 6];
-            case 6: return [3 /*break*/, 8];
-            case 7:
+                return [3 /*break*/, 5];
+            case 5: return [3 /*break*/, 7];
+            case 6:
                 Helper_1.default.sendNotFoundResponse(res, 'message');
-                _a.label = 8;
-            case 8: return [2 /*return*/];
+                _a.label = 7;
+            case 7: return [2 /*return*/];
         }
     });
 }); });
@@ -274,40 +269,9 @@ ChatListRoutes.route("/update").post(function (req, res, next) { return __awaite
         }
     });
 }); });
-//Fetch Users for ChatList/Group
-ChatListRoutes.route("/users").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, limit, chat_list_id, chatList, users, e_4;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                page = req.query.page || 1;
-                limit = req.query.limit || 20;
-                chat_list_id = req.query.chat_list_id;
-                if (!chat_list_id) return [3 /*break*/, 6];
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 4, , 5]);
-                return [4 /*yield*/, ChatList_1.default.findOne({ _id: chat_list_id })];
-            case 2:
-                chatList = _a.sent();
-                return [4 /*yield*/, Users_1.default.paginate({ _id: { $not: { $in: chatList.receivers } } }, { page: page, limit: limit })];
-            case 3:
-                users = _a.sent();
-                Helper_1.default.sendPaginationResponse(res, users);
-                return [3 /*break*/, 5];
-            case 4:
-                e_4 = _a.sent();
-                Helper_1.default.errorResponse(res, 'group/chat_list not found');
-                return [3 /*break*/, 5];
-            case 5: return [3 /*break*/, 7];
-            case 6: return [2 /*return*/, Helper_1.default.errorResponse(res, 'chat_list_id missing')];
-            case 7: return [2 /*return*/];
-        }
-    });
-}); });
 //Remove ChatList/Group
 ChatListRoutes.route("/remove").post(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var ids, query, e_5;
+    var ids, query, e_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -326,7 +290,7 @@ ChatListRoutes.route("/remove").post(function (req, res, next) { return __awaite
                 Helper_1.default.messageResponse(res, 'Removed successfully!');
                 return [3 /*break*/, 5];
             case 4:
-                e_5 = _a.sent();
+                e_4 = _a.sent();
                 Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
                 return [3 /*break*/, 5];
             case 5: return [3 /*break*/, 7];
