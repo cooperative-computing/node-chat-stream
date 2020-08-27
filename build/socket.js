@@ -87,13 +87,13 @@ var Socket_IO = function (socket) {
                             ids = [event.receiver];
                             if (event.include_sender)
                                 ids.push(event.sender);
-                            if (ids && ids.length > 0) {
-                                ids.forEach(function (id) {
+                            ids.forEach(function (id) {
+                                if (clients[id] && clients[id].length > 0) {
                                     clients[id].forEach(function (cli) {
                                         cli.emit("user-message", event);
                                     });
-                                });
-                            }
+                                }
+                            });
                             return [4 /*yield*/, Helper_1.default.userToUserChat(event)];
                         case 1:
                             _a.sent();

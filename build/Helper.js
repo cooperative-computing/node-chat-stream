@@ -82,7 +82,8 @@ var Helper = {
     },
     sendMultiUserMsg: function (room, clients, event) {
         var allIds = room.receivers;
-        allIds.splice(allIds.indexOf(event.sender), 1); // removed sender
+        if (!event.include_sender)
+            allIds.splice(allIds.indexOf(event.sender), 1); // removed sender
         allIds.forEach(function (item) {
             if (item && clients[item]) {
                 var channelName_1 = room.chat_type == 'user-group' ? 'group-message' : 'multi-user-message';

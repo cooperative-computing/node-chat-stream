@@ -42,7 +42,7 @@ const Helper = {
   },
   sendMultiUserMsg: (room: any, clients: any, event: any) => {
     let allIds = room.receivers;
-    allIds.splice(allIds.indexOf(event.sender), 1);// removed sender
+    if (!event.include_sender) allIds.splice(allIds.indexOf(event.sender), 1);// removed sender
     allIds.forEach((item: any) => {
       if (item && clients[item]) {
         let channelName = room.chat_type == 'user-group' ? 'group-message' : 'multi-user-message';

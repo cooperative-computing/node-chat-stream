@@ -39,13 +39,13 @@ const Socket_IO = (socket) => {
     client.on("user-message", async event => {
       let ids = [event.receiver];
       if (event.include_sender) ids.push(event.sender);
-      if (ids && ids.length > 0) {
-        ids.forEach((id: any) => {
+      ids.forEach((id: any) => {
+        if (clients[id] && clients[id].length > 0) {
           clients[id].forEach(cli => {
             cli.emit("user-message", event);
           });
-        });
-      }
+        }
+      });
       await Helper.userToUserChat(event);
     });
     // user to user end
