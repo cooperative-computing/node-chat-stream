@@ -46,7 +46,7 @@ var Helper_1 = __importDefault(require("../Helper"));
 var ChatRoutes = express_1.default.Router();
 //Fetch Chat for user to multi-user and user to group
 ChatRoutes.route("/").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, limit, query, param, chat_list_id, chat_type, created_by, name, userDetailsUrl, get_chatList, paginationData, getUserDetails, query_1, get_chatList, getUserDetails, paginationData;
+    var page, limit, query, param, chat_list_id, chat_type, created_by, name, userDetailsUrl, get_chatList, paginationData, getUserDetails, query_1, get_chatList, getUserDetails, paginationData, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -59,45 +59,53 @@ ChatRoutes.route("/").get(function (req, res, next) { return __awaiter(void 0, v
                 created_by = param.created_by;
                 name = param.name;
                 userDetailsUrl = param.userDetailsUrl;
-                if (!(chat_list_id && userDetailsUrl)) return [3 /*break*/, 4];
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 12, , 13]);
+                if (!(chat_list_id && userDetailsUrl)) return [3 /*break*/, 5];
                 query = { chat_list_id: chat_list_id };
                 return [4 /*yield*/, ChatList_1.default.findOne({ _id: chat_list_id })];
-            case 1:
+            case 2:
                 get_chatList = _a.sent();
                 return [4 /*yield*/, Chat_1.default.paginate(query, { page: page, limit: limit, sort: { createdAt: -1 }, lean: true })];
-            case 2:
+            case 3:
                 paginationData = _a.sent();
                 return [4 /*yield*/, Helper_1.default.getUserDetails(userDetailsUrl, get_chatList.receivers)];
-            case 3:
+            case 4:
                 getUserDetails = _a.sent();
                 paginationData.docs = Helper_1.default.chatAddUsers(paginationData.docs, getUserDetails);
                 Helper_1.default.sendPaginationResponse(res, paginationData);
-                return [3 /*break*/, 10];
-            case 4:
-                if (!(chat_type && created_by)) return [3 /*break*/, 9];
+                return [3 /*break*/, 11];
+            case 5:
+                if (!(chat_type && created_by)) return [3 /*break*/, 10];
                 query_1 = { chat_type: chat_type, created_by: created_by };
                 if (name)
                     query_1.name = name;
                 return [4 /*yield*/, ChatList_1.default.findOne(query_1)];
-            case 5:
+            case 6:
                 get_chatList = _a.sent();
                 chat_list_id = get_chatList ? get_chatList._id : false;
-                if (!(chat_list_id && userDetailsUrl)) return [3 /*break*/, 8];
+                if (!(chat_list_id && userDetailsUrl)) return [3 /*break*/, 9];
                 return [4 /*yield*/, Helper_1.default.getUserDetails(userDetailsUrl, get_chatList.receivers)];
-            case 6:
+            case 7:
                 getUserDetails = _a.sent();
                 return [4 /*yield*/, Chat_1.default.paginate({ chat_list_id: chat_list_id }, { page: page, limit: limit, sort: { createdAt: -1 }, lean: true })];
-            case 7:
+            case 8:
                 paginationData = _a.sent();
                 paginationData.docs = Helper_1.default.chatAddUsers(paginationData.docs, getUserDetails);
                 return [2 /*return*/, Helper_1.default.sendPaginationResponse(res, paginationData, { chat_list_id: chat_list_id })];
-            case 8:
-                Helper_1.default.sendNotFoundResponse(res, 'Group/chatlist not found.');
-                return [3 /*break*/, 10];
             case 9:
+                Helper_1.default.sendNotFoundResponse(res, 'Group/chatlist not found.');
+                return [3 /*break*/, 11];
+            case 10:
                 Helper_1.default.sendNotFoundResponse(res, 'message');
-                _a.label = 10;
-            case 10: return [2 /*return*/];
+                _a.label = 11;
+            case 11: return [3 /*break*/, 13];
+            case 12:
+                error_1 = _a.sent();
+                Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
+                return [3 /*break*/, 13];
+            case 13: return [2 /*return*/];
         }
     });
 }); });
