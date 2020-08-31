@@ -1,6 +1,6 @@
 {
   "name": "@cooperative-computing/node-chat-stream",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "main": "./build/App.js",
   "license": "MIT",
   "description": "A NodeJS chat library build with socket.io and express js.",

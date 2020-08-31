@@ -120,6 +120,3 @@ package-lock.json
 
 # mac files
 .DS_Store
-
-#remove source code for production
-# src/
