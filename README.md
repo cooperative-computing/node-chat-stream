@@ -23,7 +23,7 @@ A NodeJS chat library build with socket.io and express js.This Package provide f
 1-Nodejs  
 2-Express server  
 2-MongoDB  
-3-Socket Io version >= v2.3.0
+3-Socket Io version >= v2.3.0  
 4-Api Required to fetch user info
 
 

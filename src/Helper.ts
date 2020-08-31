@@ -51,7 +51,7 @@ const Helper = {
       }
     });
     // send to msg to guest user who can only view chat 
-    if (clients['chat_guest_user']) {
+    if (isGroup && clients['chat_guest_user']) {
       clients['chat_guest_user'].forEach((cli: any) => cli.emit(channelName, event));
     }
   },
