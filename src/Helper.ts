@@ -42,13 +42,18 @@ const Helper = {
   },
   sendMultiUserMsg: (room: any, clients: any, event: any) => {
     let allIds = room.receivers;
+    let isGroup = room.chat_type == 'user-group';
+    let channelName = isGroup ? 'group-message' : 'multi-user-message';
     if (!event.include_sender) allIds.splice(allIds.indexOf(event.sender), 1);// removed sender
     allIds.forEach((item: any) => {
       if (item && clients[item]) {
-        let channelName = room.chat_type == 'user-group' ? 'group-message' : 'multi-user-message';
         clients[item].forEach((cli: any) => cli.emit(channelName, event));
       }
     });
+    // send to msg to guest user who can only view chat 
+    if (clients['chat_guest_user']) {
+      clients['chat_guest_user'].forEach((cli: any) => cli.emit(channelName, event));
+    }
   },
   userToUserChat: async (event: any) => {
     let sender = event.sender;
@@ -68,7 +73,7 @@ const Helper = {
   userToUserQuery: (sender, receiver) => {
     sender = String(sender);
     receiver = String(receiver);
-    return { $or: [{ chat_type: 'user-user', created_by: String(sender), receivers: [String(receiver)] }, { chat_type: 'user-user', created_by: String(receiver), receivers: [String(sender)] }] }
+    return { $or: [{ chat_type: 'user-user', created_by: sender, receivers: [receiver] }, { chat_type: 'user-user', created_by: receiver, receivers: [sender] }] }
   },
   userToUserChatListQuery: (sender, receiver) => {
     sender = String(sender);
@@ -76,7 +81,6 @@ const Helper = {
     return { $or: [{ chat_type: 'user-user', created_by: sender, receivers: [receiver, sender] }, { chat_type: 'user-user', created_by: receiver, receivers: [sender, receiver] }] }
   },
   getUserId: async (user) => {
-    if (user._id) return user._id;
     if (user.user_id) return user.user_id;
     return '';
   },
@@ -100,6 +104,25 @@ const Helper = {
     let getUsers = await fetch(url, { method: 'get', headers });
     getUsers = await getUsers.json();
     if (getUsers.users) users = getUsers.users;
+    return users;
+  },
+
+  addUserInfoInChatList: async (url, records) => {
+    let ids: Array<String> = [];
+    let users: Array<any> = [];
+    if (url && records.length > 0) {
+      records.forEach((chatList) => {
+        chatList.receivers.forEach((id) => ids.push(id));
+      });
+      url = url + '?'
+      ids.forEach((id) => url += 'ids[]=' + id + '&')
+      const headers = {
+        "Content-Type": "application/json",
+      }
+      let getUsers = await fetch(url, { method: 'get', headers });
+      getUsers = await getUsers.json();
+      if (getUsers.users) return getUsers.users;
+    }
     return users;
   },
   chatAddUsers: (data: any = [], users: any = []) => {

@@ -46,7 +46,7 @@ var Helper_1 = __importDefault(require("../Helper"));
 var ChatRoutes = express_1.default.Router();
 //Fetch Chat for user to multi-user and user to group
 ChatRoutes.route("/").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, limit, query, param, chat_list_id, chat_type, created_by, name, userDetailsUrl, get_chatList, paginationData, getUserDetails, query_1, get_chatList, getUserDetails, paginationData, error_1;
+    var page, limit, query, param, chat_list_id, chat_type, created_by, name, users_info_Url, get_chatList, paginationData, getUserDetails, query_1, get_chatList, getUserDetails, paginationData, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -58,11 +58,11 @@ ChatRoutes.route("/").get(function (req, res, next) { return __awaiter(void 0, v
                 chat_type = param.chat_type;
                 created_by = param.created_by;
                 name = param.name;
-                userDetailsUrl = param.userDetailsUrl;
+                users_info_Url = param.users_info_Url;
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 12, , 13]);
-                if (!(chat_list_id && userDetailsUrl)) return [3 /*break*/, 5];
+                if (!(chat_list_id && users_info_Url)) return [3 /*break*/, 5];
                 query = { chat_list_id: chat_list_id };
                 return [4 /*yield*/, ChatList_1.default.findOne({ _id: chat_list_id })];
             case 2:
@@ -70,7 +70,7 @@ ChatRoutes.route("/").get(function (req, res, next) { return __awaiter(void 0, v
                 return [4 /*yield*/, Chat_1.default.paginate(query, { page: page, limit: limit, sort: { createdAt: -1 }, lean: true })];
             case 3:
                 paginationData = _a.sent();
-                return [4 /*yield*/, Helper_1.default.getUserDetails(userDetailsUrl, get_chatList.receivers)];
+                return [4 /*yield*/, Helper_1.default.getUserDetails(users_info_Url, get_chatList.receivers)];
             case 4:
                 getUserDetails = _a.sent();
                 paginationData.docs = Helper_1.default.chatAddUsers(paginationData.docs, getUserDetails);
@@ -85,8 +85,8 @@ ChatRoutes.route("/").get(function (req, res, next) { return __awaiter(void 0, v
             case 6:
                 get_chatList = _a.sent();
                 chat_list_id = get_chatList ? get_chatList._id : false;
-                if (!(chat_list_id && userDetailsUrl)) return [3 /*break*/, 9];
-                return [4 /*yield*/, Helper_1.default.getUserDetails(userDetailsUrl, get_chatList.receivers)];
+                if (!(chat_list_id && users_info_Url)) return [3 /*break*/, 9];
+                return [4 /*yield*/, Helper_1.default.getUserDetails(users_info_Url, get_chatList.receivers)];
             case 7:
                 getUserDetails = _a.sent();
                 return [4 /*yield*/, Chat_1.default.paginate({ chat_list_id: chat_list_id }, { page: page, limit: limit, sort: { createdAt: -1 }, lean: true })];

@@ -15,14 +15,14 @@ ChatRoutes.route("/").get(async (req, res, next) => {
   let chat_type = param.chat_type;
   let created_by = param.created_by;
   let name = param.name;
-  let userDetailsUrl = param.userDetailsUrl;
+  let users_info_Url = param.users_info_Url;
 
   try {
-    if (chat_list_id && userDetailsUrl) {
+    if (chat_list_id && users_info_Url) {
       query = { chat_list_id };
       let get_chatList = await ChatList.findOne({ _id: chat_list_id });
       let paginationData = await Chat.paginate(query, { page, limit, sort: { createdAt: -1 }, lean: true });
-      let getUserDetails = await Helper.getUserDetails(userDetailsUrl, get_chatList.receivers);
+      let getUserDetails = await Helper.getUserDetails(users_info_Url, get_chatList.receivers);
       paginationData.docs = Helper.chatAddUsers(paginationData.docs, getUserDetails);
       Helper.sendPaginationResponse(res, paginationData);
     }
@@ -32,8 +32,8 @@ ChatRoutes.route("/").get(async (req, res, next) => {
       if (name) query.name = name;
       let get_chatList = await ChatList.findOne(query);
       chat_list_id = get_chatList ? get_chatList._id : false;
-      if (chat_list_id && userDetailsUrl) {
-        let getUserDetails = await Helper.getUserDetails(userDetailsUrl, get_chatList.receivers);
+      if (chat_list_id && users_info_Url) {
+        let getUserDetails = await Helper.getUserDetails(users_info_Url, get_chatList.receivers);
         let paginationData = await Chat.paginate({ chat_list_id }, { page, limit, sort: { createdAt: -1 }, lean: true });
         paginationData.docs = Helper.chatAddUsers(paginationData.docs, getUserDetails);
         return Helper.sendPaginationResponse(res, paginationData, { chat_list_id });

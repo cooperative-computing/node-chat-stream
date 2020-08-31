@@ -52,43 +52,48 @@ var Chat_1 = __importDefault(require("../Models/Chat"));
 var Helper_1 = __importDefault(require("../Helper"));
 var ChatListRoutes = express_1.default.Router();
 ChatListRoutes.route("/").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, limit, query, param, user_id, chat_type, paginationData, params, _a, error_1;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var page, limit, query, param, user_id, users_info_Url, chat_type, paginationData, chatInfo, _a, _b, error_1;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
                 page = req.query.page || 1;
                 limit = req.query.limit || 20;
                 query = {};
                 param = req.query;
                 user_id = param.user_id;
-                if (!(user_id && param.chat_type)) return [3 /*break*/, 6];
+                users_info_Url = param.users_info_Url;
+                if (!(user_id && param.chat_type)) return [3 /*break*/, 7];
                 user_id = String(user_id);
-                _b.label = 1;
+                _c.label = 1;
             case 1:
-                _b.trys.push([1, 4, , 5]);
+                _c.trys.push([1, 5, , 6]);
                 chat_type = param.chat_type;
                 query = { chat_type: chat_type, receivers: { $all: [user_id] } };
                 return [4 /*yield*/, ChatList_1.default.paginate(query, { page: page, limit: limit, sort: { createdAt: -1 }, lean: true })];
             case 2:
-                paginationData = _b.sent();
-                params = { chat_type: chat_type, user_id: param.user_id };
+                paginationData = _c.sent();
+                chatInfo = { chat_type: chat_type, user_id: param.user_id, users: [] };
                 //add last msg/chat in chatlist
                 _a = paginationData;
                 return [4 /*yield*/, Helper_1.default.addLastChatInList(paginationData.docs)];
             case 3:
                 //add last msg/chat in chatlist
-                _a.docs = _b.sent();
-                Helper_1.default.sendPaginationResponse(res, paginationData, params);
-                return [3 /*break*/, 5];
+                _a.docs = _c.sent();
+                _b = chatInfo;
+                return [4 /*yield*/, Helper_1.default.addUserInfoInChatList(users_info_Url, paginationData.docs)];
             case 4:
-                error_1 = _b.sent();
+                _b.users = _c.sent();
+                Helper_1.default.sendPaginationResponse(res, paginationData, chatInfo);
+                return [3 /*break*/, 6];
+            case 5:
+                error_1 = _c.sent();
                 Helper_1.default.sendNotFoundResponse(res, param.chat_type == 'user-group' ? 'Group' : 'Chat list');
-                return [3 /*break*/, 5];
-            case 5: return [3 /*break*/, 7];
-            case 6:
+                return [3 /*break*/, 6];
+            case 6: return [3 /*break*/, 8];
+            case 7:
                 Helper_1.default.sendNotFoundResponse(res, param.chat_type == 'user-group' ? 'Group' : 'Chat list');
-                _b.label = 7;
-            case 7: return [2 /*return*/];
+                _c.label = 8;
+            case 8: return [2 /*return*/];
         }
     });
 }); });

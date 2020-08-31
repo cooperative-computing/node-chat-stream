@@ -11,17 +11,18 @@ ChatListRoutes.route("/").get(async (req, res, next) => {
   let query = {};
   let param = req.query;
   let user_id = param.user_id;
+  let users_info_Url = param.users_info_Url;
   if (user_id && param.chat_type) {
     user_id = String(user_id);
     try {
       let chat_type = param.chat_type;
       query = { chat_type, receivers: { $all: [user_id] } };
       let paginationData = await ChatList.paginate(query, { page, limit, sort: { createdAt: -1 }, lean: true });
-      let params = { chat_type, user_id: param.user_id }
+      let chatInfo: any = { chat_type, user_id: param.user_id, users: [] }
       //add last msg/chat in chatlist
       paginationData.docs = await Helper.addLastChatInList(paginationData.docs);
-
-      Helper.sendPaginationResponse(res, paginationData, params);
+      chatInfo.users = await Helper.addUserInfoInChatList(users_info_Url, paginationData.docs);
+      Helper.sendPaginationResponse(res, paginationData, chatInfo);
 
     }
     catch (error) {

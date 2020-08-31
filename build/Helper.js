@@ -82,14 +82,19 @@ var Helper = {
     },
     sendMultiUserMsg: function (room, clients, event) {
         var allIds = room.receivers;
+        var isGroup = room.chat_type == 'user-group';
+        var channelName = isGroup ? 'group-message' : 'multi-user-message';
         if (!event.include_sender)
             allIds.splice(allIds.indexOf(event.sender), 1); // removed sender
         allIds.forEach(function (item) {
             if (item && clients[item]) {
-                var channelName_1 = room.chat_type == 'user-group' ? 'group-message' : 'multi-user-message';
-                clients[item].forEach(function (cli) { return cli.emit(channelName_1, event); });
+                clients[item].forEach(function (cli) { return cli.emit(channelName, event); });
             }
         });
+        // send to msg to guest user who can only view chat 
+        if (clients['chat_guest_user']) {
+            clients['chat_guest_user'].forEach(function (cli) { return cli.emit(channelName, event); });
+        }
     },
     userToUserChat: function (event) { return __awaiter(void 0, void 0, void 0, function () {
         var sender, receiver, chat_list, query;
@@ -112,7 +117,7 @@ var Helper = {
     userToUserQuery: function (sender, receiver) {
         sender = String(sender);
         receiver = String(receiver);
-        return { $or: [{ chat_type: 'user-user', created_by: String(sender), receivers: [String(receiver)] }, { chat_type: 'user-user', created_by: String(receiver), receivers: [String(sender)] }] };
+        return { $or: [{ chat_type: 'user-user', created_by: sender, receivers: [receiver] }, { chat_type: 'user-user', created_by: receiver, receivers: [sender] }] };
     },
     userToUserChatListQuery: function (sender, receiver) {
         sender = String(sender);
@@ -121,8 +126,6 @@ var Helper = {
     },
     getUserId: function (user) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            if (user._id)
-                return [2 /*return*/, user._id];
             if (user.user_id)
                 return [2 /*return*/, user.user_id];
             return [2 /*return*/, ''];
@@ -163,6 +166,35 @@ var Helper = {
                     if (getUsers.users)
                         users = getUsers.users;
                     return [2 /*return*/, users];
+            }
+        });
+    }); },
+    addUserInfoInChatList: function (url, records) { return __awaiter(void 0, void 0, void 0, function () {
+        var ids, users, headers, getUsers;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    ids = [];
+                    users = [];
+                    if (!(url && records.length > 0)) return [3 /*break*/, 3];
+                    records.forEach(function (chatList) {
+                        chatList.receivers.forEach(function (id) { return ids.push(id); });
+                    });
+                    url = url + '?';
+                    ids.forEach(function (id) { return url += 'ids[]=' + id + '&'; });
+                    headers = {
+                        "Content-Type": "application/json",
+                    };
+                    return [4 /*yield*/, node_fetch_1.default(url, { method: 'get', headers: headers })];
+                case 1:
+                    getUsers = _a.sent();
+                    return [4 /*yield*/, getUsers.json()];
+                case 2:
+                    getUsers = _a.sent();
+                    if (getUsers.users)
+                        return [2 /*return*/, getUsers.users];
+                    _a.label = 3;
+                case 3: return [2 /*return*/, users];
             }
         });
     }); },

@@ -24,6 +24,22 @@ A NodeJS chat library build with socket.io and express js.This Package provide f
 2-Express server  
 2-MongoDB  
 3-Socket Io version >= v2.3.0
+4-Api Required to fetch user info
+
+
+API url `https://your_app.com/getUsersByIds?ids[]=1&ids[]=2`  
+API response: 
+```sh
+{
+  users:[
+    {
+      id:1,
+      .....
+    }
+  ]
+}
+```  
+
 
 ### Installation  
 1-Run 
