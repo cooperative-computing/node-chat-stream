@@ -1,3 +1,5 @@
 
 #hid source code for npm registry
 src/
+
+node_modules/
