@@ -87,7 +87,7 @@ const Helper = {
   addLastChatInList(list: Array<any>): Promise<any> {
     return Promise.all(
       list.map(async (item, index) => {
-        const chat = await Chat.findOne({ chat_list_id: item._id }, { text: 1, sender: 1 }).sort({ createdAt: -1 });
+        const chat = await Chat.findOne({ chat_list_id: item._id }, { text: 1, sender: 1, createdAt: 1 }).sort({ createdAt: -1 });
         item.chat = chat;
         return item;
       })

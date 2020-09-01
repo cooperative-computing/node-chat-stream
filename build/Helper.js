@@ -137,7 +137,7 @@ var Helper = {
             var chat;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, Chat_1.default.findOne({ chat_list_id: item._id }, { text: 1, sender: 1 }).sort({ createdAt: -1 })];
+                    case 0: return [4 /*yield*/, Chat_1.default.findOne({ chat_list_id: item._id }, { text: 1, sender: 1, createdAt: 1 }).sort({ createdAt: -1 })];
                     case 1:
                         chat = _a.sent();
                         item.chat = chat;
