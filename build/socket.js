@@ -44,6 +44,7 @@ var ChatList_1 = __importDefault(require("./Models/ChatList"));
 var Helper_1 = __importDefault(require("./Helper"));
 var Socket_IO = function (socket) {
     var clients = [];
+    var roomData = [];
     //setup event listener
     socket.on("connection", function (client) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -54,7 +55,6 @@ var Socket_IO = function (socket) {
                         case 0: return [4 /*yield*/, Helper_1.default.getUserId(e)];
                         case 1:
                             user_id = _a.sent();
-                            console.log("node-chat-join ", user_id);
                             if (!user_id)
                                 return [2 /*return*/, false];
                             client.user_id = user_id;
@@ -77,7 +77,69 @@ var Socket_IO = function (socket) {
                         targetClients.splice(i, 1);
                     }
                 }
+                // loop through every room(chat list)
+                for (var i in roomData) {
+                    // check if room(chat_list_id) is not defined and not empty
+                    if (roomData[i] !== undefined && roomData[i].length > 0) {
+                        // retrieve the index against disconnecting userId in roomData(Object) roomId(Array)
+                        var ridx = roomData[i].indexOf(client.user_id);
+                        if (ridx > -1) {
+                            // remove index/instance from roomData(Object) roomId(Array)
+                            roomData[i].splice(ridx, 1);
+                        }
+                    }
+                }
             });
+            // catch on user joins the chat room
+            client.on("join_room", function (room) { return __awaiter(void 0, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    client.join('user-to-user-chat-room');
+                    // check if roomId(chat_list_id) exists in roomData(Object)
+                    if (room.roomId in roomData) {
+                        // check if userId exists in roomData(Object) in roomId(Array)
+                        if (roomData[room.roomId].indexOf(room.userId) < 0) {
+                            // add userId in roomId(Array)
+                            roomData[room.roomId].push(room.userId);
+                        }
+                    }
+                    else {
+                        // check if roomId(chat_list_id) is defined and empty
+                        if (roomData[room.roomId] === undefined || roomData[room.roomId].length == 0) {
+                            // create empty Array against new room(chat_list_id)
+                            roomData[room.roomId] = [];
+                            // add userId in roomId(Array)
+                            roomData[room.roomId].push(room.userId);
+                        }
+                        else {
+                            // check if userId exists in roomData(Object) in roomId(Array)
+                            if (roomData[room.roomId].indexOf(room.userId) < 0) {
+                                // add userId in roomId(Array)
+                                roomData[room.roomId].push(room.userId);
+                            }
+                        }
+                    }
+                    return [2 /*return*/];
+                });
+            }); });
+            // catch on user leaves the chat room
+            client.on("leave_room", function (room) { return __awaiter(void 0, void 0, void 0, function () {
+                var idx;
+                return __generator(this, function (_a) {
+                    client.leave('user-to-user-chat-room');
+                    // check if roomId(chat_list_id) exists in roomData(Object)
+                    if (room.roomId in roomData) {
+                        // check if roomId has sender/receiver(user ids[Array])
+                        if (roomData[room.roomId].length > 0) {
+                            idx = roomData[room.roomId].indexOf(room.userId);
+                            if (idx > -1) {
+                                // remove index/instance from roomData(Object) roomId(Array)
+                                roomData[room.roomId].splice(idx, 1);
+                            }
+                        }
+                    }
+                    return [2 /*return*/];
+                });
+            }); });
             // user to user start
             client.on("user-message", function (event) { return __awaiter(void 0, void 0, void 0, function () {
                 var ids;
@@ -87,6 +149,14 @@ var Socket_IO = function (socket) {
                             ids = [event.receiver];
                             if (event.include_sender)
                                 ids.push(event.sender);
+                            // check room exists against chat list id
+                            if (event.chat_list_id in roomData) {
+                                // check if user on other side is not active or joined chat room against chat list id
+                                if (roomData[event.chat_list_id].indexOf(event.receiver) < 0) {
+                                    // send chat notification event on client side
+                                    client.emit('send-chat-notification', true);
+                                }
+                            }
                             ids.forEach(function (id) {
                                 if (clients[id] && clients[id].length > 0) {
                                     clients[id].forEach(function (cli) {
@@ -131,6 +201,7 @@ var Socket_IO = function (socket) {
                                 Helper_1.default.sendMultiUserMsg(room, clients, data);
                                 Helper_1.default.addChat(data); //save chat to the database
                             }
+                            client.emit('send-group-message', data);
                             return [2 /*return*/];
                     }
                 });
