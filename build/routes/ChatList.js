@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -35,12 +35,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -48,6 +50,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var ChatList_1 = __importDefault(require("../Models/ChatList"));
+var ChatHistory_1 = __importDefault(require("../Models/ChatHistory"));
 var Chat_1 = __importDefault(require("../Models/Chat"));
 var Helper_1 = __importDefault(require("../Helper"));
 var ChatListRoutes = express_1.default.Router();
@@ -69,7 +72,12 @@ ChatListRoutes.route("/").get(function (req, res, next) { return __awaiter(void 
                 _c.trys.push([1, 5, , 6]);
                 chat_type = param.chat_type;
                 query = { chat_type: chat_type, receivers: { $all: [user_id] } };
-                return [4 /*yield*/, ChatList_1.default.paginate(query, { page: page, limit: limit, sort: { createdAt: -1 }, lean: true })];
+                return [4 /*yield*/, ChatList_1.default.paginate(query, {
+                        page: page,
+                        limit: limit,
+                        sort: { createdAt: -1 },
+                        lean: true,
+                    })];
             case 2:
                 paginationData = _c.sent();
                 chatInfo = { chat_type: chat_type, user_id: param.user_id, users: [] };
@@ -87,11 +95,11 @@ ChatListRoutes.route("/").get(function (req, res, next) { return __awaiter(void 
                 return [3 /*break*/, 6];
             case 5:
                 error_1 = _c.sent();
-                Helper_1.default.sendNotFoundResponse(res, param.chat_type == 'user-group' ? 'Group' : 'Chat list');
+                Helper_1.default.sendNotFoundResponse(res, param.chat_type == "user-group" ? "Group" : "Chat list");
                 return [3 /*break*/, 6];
             case 6: return [3 /*break*/, 8];
             case 7:
-                Helper_1.default.sendNotFoundResponse(res, param.chat_type == 'user-group' ? 'Group' : 'Chat list');
+                Helper_1.default.sendNotFoundResponse(res, param.chat_type == "user-group" ? "Group" : "Chat list");
                 _c.label = 8;
             case 8: return [2 /*return*/];
         }
@@ -109,13 +117,17 @@ ChatListRoutes.route("/chat").get(function (req, res, next) { return __awaiter(v
                 param = req.query;
                 if (!param.chat_list_id) return [3 /*break*/, 2];
                 query = { chat_list_id: param.chat_list_id };
-                return [4 /*yield*/, Chat_1.default.paginate(query, { page: page, limit: limit, sort: { createdAt: -1 } })];
+                return [4 /*yield*/, Chat_1.default.paginate(query, {
+                        page: page,
+                        limit: limit,
+                        sort: { createdAt: -1 },
+                    })];
             case 1:
                 paginationData = _a.sent();
                 Helper_1.default.sendPaginationResponse(res, paginationData);
                 return [3 /*break*/, 3];
             case 2:
-                Helper_1.default.sendNotFoundResponse(res, 'message');
+                Helper_1.default.sendNotFoundResponse(res, "message");
                 _a.label = 3;
             case 3: return [2 /*return*/];
         }
@@ -148,11 +160,11 @@ ChatListRoutes.route("/user-user-chat").get(function (req, res, next) { return _
                 return [3 /*break*/, 5];
             case 4:
                 error_2 = _a.sent();
-                Helper_1.default.sendNotFoundResponse(res, 'message');
+                Helper_1.default.sendNotFoundResponse(res, "message");
                 return [3 /*break*/, 5];
             case 5: return [3 /*break*/, 7];
             case 6:
-                Helper_1.default.sendNotFoundResponse(res, 'message');
+                Helper_1.default.sendNotFoundResponse(res, "message");
                 _a.label = 7;
             case 7: return [2 /*return*/];
         }
@@ -182,7 +194,7 @@ ChatListRoutes.route("/chat").post(function (req, res, next) { return __awaiter(
                 return [3 /*break*/, 5];
             case 4:
                 e_1 = _a.sent();
-                Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
+                Helper_1.default.errorResponse(res, "Something went wrong.Please try again.");
                 return [3 /*break*/, 5];
             case 5: return [2 /*return*/];
         }
@@ -197,9 +209,15 @@ ChatListRoutes.route("/add").post(function (req, res, next) { return __awaiter(v
                 body = req.body;
                 receivers = body.receivers || [];
                 if (!(body.created_by && body.receivers && body.chat_type)) return [3 /*break*/, 12];
-                allIds = __spreadArrays(receivers, [body.created_by]);
-                data = { chat_type: body.chat_type, created_by: body.created_by, receivers: allIds, name: '', image: '' };
-                if (body.chat_type == 'user-group') {
+                allIds = __spreadArray(__spreadArray([], receivers, true), [body.created_by], false);
+                data = {
+                    chat_type: body.chat_type,
+                    created_by: body.created_by,
+                    receivers: allIds,
+                    name: "",
+                    image: "",
+                };
+                if (body.chat_type == "user-group") {
                     data.name = body.name;
                     data.image = body.image;
                 }
@@ -207,7 +225,7 @@ ChatListRoutes.route("/add").post(function (req, res, next) { return __awaiter(v
             case 1:
                 _a.trys.push([1, 10, , 11]);
                 chatList = void 0;
-                if (!(body.chat_type == 'user-user')) return [3 /*break*/, 7];
+                if (!(body.chat_type == "user-user")) return [3 /*break*/, 7];
                 query = Helper_1.default.userToUserChatListQuery(body.created_by, body.receivers[0]);
                 return [4 /*yield*/, ChatList_1.default.findOne(query)];
             case 2:
@@ -235,11 +253,11 @@ ChatListRoutes.route("/add").post(function (req, res, next) { return __awaiter(v
                 return [3 /*break*/, 11];
             case 10:
                 e_2 = _a.sent();
-                Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
+                Helper_1.default.errorResponse(res, "Something went wrong.Please try again.");
                 return [3 /*break*/, 11];
             case 11: return [3 /*break*/, 13];
             case 12:
-                Helper_1.default.errorResponse(res, 'created_by or chat_type is missing/');
+                Helper_1.default.errorResponse(res, "created_by or chat_type is missing/");
                 _a.label = 13;
             case 13: return [2 /*return*/];
         }
@@ -260,15 +278,15 @@ ChatListRoutes.route("/update").post(function (req, res, next) { return __awaite
                 return [4 /*yield*/, ChatList_1.default.findByIdAndUpdate({ _id: chat_list_id }, { receivers: receivers })];
             case 2:
                 _a.sent();
-                Helper_1.default.messageResponse(res, 'Receivers Updated successfully!');
+                Helper_1.default.messageResponse(res, "Receivers Updated successfully!");
                 return [3 /*break*/, 4];
             case 3:
                 e_3 = _a.sent();
-                Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
+                Helper_1.default.errorResponse(res, "Something went wrong.Please try again.");
                 return [3 /*break*/, 4];
             case 4: return [3 /*break*/, 6];
             case 5:
-                Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
+                Helper_1.default.errorResponse(res, "Something went wrong.Please try again.");
                 _a.label = 6;
             case 6: return [2 /*return*/];
         }
@@ -292,17 +310,60 @@ ChatListRoutes.route("/remove").post(function (req, res, next) { return __awaite
                 return [4 /*yield*/, Chat_1.default.deleteMany({ chat_list_id: { $in: ids } })];
             case 3:
                 _a.sent();
-                Helper_1.default.messageResponse(res, 'Removed successfully!');
+                Helper_1.default.messageResponse(res, "Removed successfully!");
                 return [3 /*break*/, 5];
             case 4:
                 e_4 = _a.sent();
-                Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
+                Helper_1.default.errorResponse(res, "Something went wrong.Please try again.");
                 return [3 /*break*/, 5];
             case 5: return [3 /*break*/, 7];
             case 6:
-                Helper_1.default.errorResponse(res, 'ids missing.');
+                Helper_1.default.errorResponse(res, "ids missing.");
                 _a.label = 7;
             case 7: return [2 /*return*/];
+        }
+    });
+}); });
+ChatListRoutes.route("/delete").delete(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var chatList, _a, _b, _c, _i, i, _d, chat_list_id, userId, e_5;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
+            case 0:
+                chatList = req.body.chatList;
+                if (!(chatList.length > 0)) return [3 /*break*/, 7];
+                _a = chatList;
+                _b = [];
+                for (_c in _a)
+                    _b.push(_c);
+                _i = 0;
+                _e.label = 1;
+            case 1:
+                if (!(_i < _b.length)) return [3 /*break*/, 6];
+                _c = _b[_i];
+                if (!(_c in _a)) return [3 /*break*/, 5];
+                i = _c;
+                _d = chatList[i], chat_list_id = _d.chat_list_id, userId = _d.userId;
+                _e.label = 2;
+            case 2:
+                _e.trys.push([2, 4, , 5]);
+                return [4 /*yield*/, ChatHistory_1.default.updateOne({ chat_list_id: chat_list_id, userId: userId }, { $set: { chat_list_id: chat_list_id, userId: userId } }, { upsert: true })];
+            case 3:
+                _e.sent();
+                return [3 /*break*/, 5];
+            case 4:
+                e_5 = _e.sent();
+                Helper_1.default.errorResponse(res, "Something went wrong.Please try again.");
+                return [3 /*break*/, 5];
+            case 5:
+                _i++;
+                return [3 /*break*/, 1];
+            case 6:
+                Helper_1.default.messageResponse(res, "Deleted successfully!");
+                return [3 /*break*/, 8];
+            case 7:
+                Helper_1.default.errorResponse(res, "ids missing.");
+                _e.label = 8;
+            case 8: return [2 /*return*/];
         }
     });
 }); });
@@ -328,7 +389,7 @@ ChatListRoutes.route("/get_details").get(function (req, res, next) { return __aw
                 Helper_1.default.sendResponse(res, chat_list_details);
                 return [3 /*break*/, 3];
             case 2:
-                Helper_1.default.sendNotFoundResponse(res, 'created_by or chat_type missing.');
+                Helper_1.default.sendNotFoundResponse(res, "created_by or chat_type missing.");
                 _a.label = 3;
             case 3: return [2 /*return*/];
         }

@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -42,11 +42,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var ChatList_1 = __importDefault(require("../Models/ChatList"));
 var Chat_1 = __importDefault(require("../Models/Chat"));
+var ChatHistory_1 = __importDefault(require("../Models/ChatHistory"));
 var Helper_1 = __importDefault(require("../Helper"));
 var ChatRoutes = express_1.default.Router();
 //Fetch Chat for user to multi-user and user to group
 ChatRoutes.route("/").get(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, limit, query, param, chat_list_id, chat_type, created_by, name, users_info_Url, get_chatList, paginationData, getUserDetails, query_1, get_chatList, getUserDetails, paginationData, error_1;
+    var page, limit, query, param, chat_list_id, chat_type, created_by, name, users_info_Url, userId, historyExist, get_chatList, paginationData, getUserDetails, query_1, get_chatList, getUserDetails, paginationData, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -59,53 +60,69 @@ ChatRoutes.route("/").get(function (req, res, next) { return __awaiter(void 0, v
                 created_by = param.created_by;
                 name = param.name;
                 users_info_Url = param.users_info_Url;
+                userId = param.userId;
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 12, , 13]);
-                if (!(chat_list_id && users_info_Url)) return [3 /*break*/, 5];
-                query = { chat_list_id: chat_list_id };
-                return [4 /*yield*/, ChatList_1.default.findOne({ _id: chat_list_id })];
+                _a.trys.push([1, 13, , 14]);
+                if (!(chat_list_id && users_info_Url)) return [3 /*break*/, 6];
+                return [4 /*yield*/, ChatHistory_1.default.findOne({ userId: userId, chat_list_id: chat_list_id })];
             case 2:
-                get_chatList = _a.sent();
-                return [4 /*yield*/, Chat_1.default.paginate(query, { page: page, limit: limit, sort: { createdAt: -1 }, lean: true })];
+                historyExist = _a.sent();
+                if (historyExist) {
+                    query = { chat_list_id: chat_list_id, updatedAt: { $gte: historyExist.updatedAt } };
+                }
+                else {
+                    query = { chat_list_id: chat_list_id };
+                }
+                return [4 /*yield*/, ChatList_1.default.findOne({ _id: chat_list_id })];
             case 3:
+                get_chatList = _a.sent();
+                return [4 /*yield*/, Chat_1.default.paginate(query, {
+                        page: page,
+                        limit: limit,
+                        sort: { createdAt: -1 },
+                        lean: true,
+                    })];
+            case 4:
                 paginationData = _a.sent();
                 return [4 /*yield*/, Helper_1.default.getUserDetails(users_info_Url, get_chatList.receivers)];
-            case 4:
+            case 5:
                 getUserDetails = _a.sent();
                 paginationData.docs = Helper_1.default.chatAddUsers(paginationData.docs, getUserDetails);
                 Helper_1.default.sendPaginationResponse(res, paginationData);
-                return [3 /*break*/, 11];
-            case 5:
-                if (!(chat_type && created_by)) return [3 /*break*/, 10];
+                return [3 /*break*/, 12];
+            case 6:
+                if (!(chat_type && created_by)) return [3 /*break*/, 11];
                 query_1 = { chat_type: chat_type, created_by: created_by };
                 if (name)
                     query_1.name = name;
                 return [4 /*yield*/, ChatList_1.default.findOne(query_1)];
-            case 6:
+            case 7:
                 get_chatList = _a.sent();
                 chat_list_id = get_chatList ? get_chatList._id : false;
-                if (!(chat_list_id && users_info_Url)) return [3 /*break*/, 9];
+                if (!(chat_list_id && users_info_Url)) return [3 /*break*/, 10];
                 return [4 /*yield*/, Helper_1.default.getUserDetails(users_info_Url, get_chatList.receivers)];
-            case 7:
+            case 8:
                 getUserDetails = _a.sent();
                 return [4 /*yield*/, Chat_1.default.paginate({ chat_list_id: chat_list_id }, { page: page, limit: limit, sort: { createdAt: -1 }, lean: true })];
-            case 8:
+            case 9:
                 paginationData = _a.sent();
                 paginationData.docs = Helper_1.default.chatAddUsers(paginationData.docs, getUserDetails);
-                return [2 /*return*/, Helper_1.default.sendPaginationResponse(res, paginationData, { chat_list_id: chat_list_id })];
-            case 9:
-                Helper_1.default.sendNotFoundResponse(res, 'Group/chatlist not found.');
-                return [3 /*break*/, 11];
+                return [2 /*return*/, Helper_1.default.sendPaginationResponse(res, paginationData, {
+                        chat_list_id: chat_list_id,
+                    })];
             case 10:
-                Helper_1.default.sendNotFoundResponse(res, 'message');
-                _a.label = 11;
-            case 11: return [3 /*break*/, 13];
-            case 12:
+                Helper_1.default.sendNotFoundResponse(res, "Group/chatlist not found.");
+                return [3 /*break*/, 12];
+            case 11:
+                Helper_1.default.sendNotFoundResponse(res, "message");
+                _a.label = 12;
+            case 12: return [3 /*break*/, 14];
+            case 13:
                 error_1 = _a.sent();
-                Helper_1.default.errorResponse(res, 'Something went wrong.Please try again.');
-                return [3 /*break*/, 13];
-            case 13: return [2 /*return*/];
+                Helper_1.default.errorResponse(res, "Something went wrong.Please try again.");
+                return [3 /*break*/, 14];
+            case 14: return [2 /*return*/];
         }
     });
 }); });
